@@ -378,8 +378,17 @@ document.addEventListener('click', (e)=>{
 window.addEventListener('mousedown', ()=> { cursorGlow.style.width = '160px'; cursorGlow.style.height = '160px'; });
 window.addEventListener('mouseup', ()=> { cursorGlow.style.width = '120px'; cursorGlow.style.height = '120px'; });
 
-/* Accessibility: Escape closes tabs */
-document.addEventListener('keydown', (e)=> { if(e.key === 'Escape') tabs.forEach(t=> t.classList.remove('active')) });
+/* Accessibility: Escape closes tabs and resets arrows */
+document.addEventListener('keydown', (e)=> { 
+  if(e.key === 'Escape') {
+    tabs.forEach(t=> {
+      t.classList.remove('active');
+      const arrow = t.querySelector('.arrow');
+      if (arrow) arrow.style.transform = '';
+    });
+  }
+});
+
 
 </script>
 </body>
