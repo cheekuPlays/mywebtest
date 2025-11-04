@@ -15,10 +15,15 @@
   body {
     height: 100vh;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     background: linear-gradient(120deg, #101020, #1e1e30, #282840);
     background-size: 400% 400%;
     animation: bgShift 15s ease infinite;
     color: white;
+    position: relative;
   }
 
   @keyframes bgShift {
@@ -27,10 +32,19 @@
     100% { background-position: 0% 50%; }
   }
 
+  /* Mouse trail canvas */
+  canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+
   /* NAVBAR */
   .navbar {
-    position: absolute;
-    top: 20px;
+    position: fixed;
+    top: 30px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -48,32 +62,34 @@
     cursor: pointer;
     transition: 0.3s;
     font-weight: 500;
+    text-align: center;
   }
 
   .tab:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.25);
   }
 
-  /* Dropdown panels */
+  /* Dropdowns */
   .tab-content {
     position: absolute;
     top: 50px;
-    left: 0;
-    width: 240px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-10px);
+    width: 260px;
     background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(12px);
     border-radius: 12px;
     padding: 15px;
     opacity: 0;
     pointer-events: none;
-    transform: translateY(-10px);
     transition: all 0.3s ease;
+    text-align: center;
   }
 
   .tab.active .tab-content {
     opacity: 1;
     pointer-events: all;
-    transform: translateY(0);
+    transform: translateX(-50%) translateY(0);
   }
 
   .tab-content p {
@@ -83,13 +99,9 @@
 
   /* Center Card */
   .center-card {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform-style: preserve-3d;
-    transform: translate(-50%, -50%);
-    width: 340px;
-    height: 200px;
+    position: relative;
+    width: 380px;
+    height: 220px;
     background: rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(15px);
     border-radius: 20px;
@@ -103,7 +115,7 @@
   }
 
   .center-card h2 {
-    font-size: 1.6rem;
+    font-size: 1.8rem;
     margin-bottom: 8px;
   }
 
@@ -111,46 +123,39 @@
     font-size: 1rem;
     opacity: 0.85;
   }
-
-  /* Mouse trail lines */
-  canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1;
-    pointer-events: none;
-  }
 </style>
 </head>
 <body>
 
 <canvas id="trail"></canvas>
 
+<!-- NAVBAR -->
 <div class="navbar">
   <div class="tab">Game Development
     <div class="tab-content">
-      <p>Explore Cheeku’s ongoing game projects, prototypes, and creative experiments in design and gameplay systems.</p>
+      <p>Explore ongoing game projects, prototypes, and creative experiments in design and gameplay.</p>
     </div>
   </div>
   <div class="tab">WEB3
     <div class="tab-content">
-      <p>Discover ideas connecting creativity and decentralized systems — experiments in blockchain and smart interaction.</p>
+      <p>Discover ideas connecting creativity and decentralized systems — smart, open, and innovative.</p>
     </div>
   </div>
   <div class="tab">Editing
     <div class="tab-content">
-      <p>Video and content editing workflows — learning new tools, mixing visuals, and refining the art of storytelling.</p>
+      <p>Video, visual, and content editing workflows that shape stories with precision and style.</p>
     </div>
   </div>
 </div>
 
+<!-- CENTER CARD -->
 <div class="center-card" id="card">
   <h2>Welcome to Cheeku's Space</h2>
   <p>Something new is taking shape.</p>
 </div>
 
 <script>
-  // --- Background Trail Canvas ---
+  // --- Mouse Trail Canvas ---
   const canvas = document.getElementById("trail");
   const ctx = canvas.getContext("2d");
   let w, h;
@@ -161,48 +166,56 @@
   window.addEventListener("resize", resize);
   resize();
 
-  const points = [];
+  let mouse = { x: 0, y: 0 };
+  const trails = [];
+
   document.addEventListener("mousemove", (e) => {
-    points.push({ x: e.clientX, y: e.clientY, alpha: 1 });
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+    trails.push({ x: mouse.x, y: mouse.y, alpha: 1 });
   });
 
-  function animate() {
+  function animateTrail() {
     ctx.clearRect(0, 0, w, h);
-    for (let i = 0; i < points.length; i++) {
-      const p = points[i];
-      ctx.strokeStyle = `rgba(0, 255, 255, ${p.alpha})`;
-      ctx.beginPath();
-      ctx.moveTo(p.x, p.y);
-      if (points[i - 1]) ctx.lineTo(points[i - 1].x, points[i - 1].y);
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      p.alpha -= 0.03;
-      if (p.alpha <= 0) points.splice(i, 1);
-    }
-    requestAnimationFrame(animate);
-  }
-  animate();
+    ctx.lineWidth = 6;
+    ctx.lineCap = "round";
 
-  // --- Tab Drop Panels ---
+    for (let i = 0; i < trails.length - 1; i++) {
+      const p1 = trails[i];
+      const p2 = trails[i + 1];
+      ctx.strokeStyle = `rgba(0, 200, 255, ${p1.alpha})`;
+      ctx.beginPath();
+      ctx.moveTo(p1.x, p1.y);
+      ctx.lineTo(p2.x, p2.y);
+      ctx.stroke();
+      p1.alpha -= 0.02;
+      if (p1.alpha <= 0) trails.splice(i, 1);
+    }
+    requestAnimationFrame(animateTrail);
+  }
+  animateTrail();
+
+  // --- Tabs ---
   document.querySelectorAll(".tab").forEach(tab => {
     tab.addEventListener("click", () => {
+      const active = tab.classList.contains("active");
       document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-      tab.classList.toggle("active");
+      if (!active) tab.classList.add("active");
     });
   });
 
-  // --- Card Parallax Effect ---
+  // --- Card Parallax ---
   const card = document.getElementById("card");
   card.addEventListener("mousemove", (e) => {
     const rect = card.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    const rotateY = (x / rect.width - 0.5) * 20;
-    const rotateX = (0.5 - y / rect.height) * 20;
-    card.style.transform = `translate(-50%, -50%) rotateY(${rotateY}deg) rotateX(${rotateX}deg)`;
+    const rotateY = (x / rect.width - 0.5) * 40; // stronger tilt
+    const rotateX = (0.5 - y / rect.height) * 40; // stronger tilt
+    card.style.transform = `rotateY(${rotateY}deg) rotateX(${rotateX}deg) scale(1.05)`;
   });
   card.addEventListener("mouseleave", () => {
-    card.style.transform = "translate(-50%, -50%) rotateY(0deg) rotateX(0deg)";
+    card.style.transform = "rotateY(0deg) rotateX(0deg) scale(1)";
   });
 </script>
 
