@@ -1,12 +1,10 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Cheeku fun — Under Development</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-
 <style>
   :root{
     --accent: #ff8800;
@@ -14,163 +12,129 @@
     --glass-bg: rgba(255,255,255,0.06);
     --glass-border: rgba(255,255,255,0.10);
     --panel-text: #eafcff;
-    --ui-z: 50;
+    --ui-z: 60;
+    --pulse: 1;
   }
   *{box-sizing:border-box}
-  html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial;}
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial;color:#fff; -webkit-font-smoothing:antialiased}
   body{
-    color:#fff;
     overflow:hidden;
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
-
     /* animated gradient flow (GPU) */
     background: linear-gradient(120deg, #071227 0%, #082033 35%, #0b1630 65%, #071227 100%);
     background-size: 200% 200%;
-    animation: bgShift 18s linear infinite;
-    position: relative;
+    animation: bgShift 20s linear infinite;
+    --bg-brightness: 1;
+    transition: --bg-brightness .2s linear;
   }
-  @keyframes bgShift{
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
+  @keyframes bgShift{ 0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%} }
 
-  /* spotlight (follows cursor) */
-  .spotlight {
-    position: fixed;
-    left: 0; top: 0;
-    width: 520px; height: 520px;
-    pointer-events: none;
-    transform: translate3d(-9999px,-9999px,0);
-    z-index: 2;
-    mix-blend-mode: screen;
-    filter: blur(40px);
-    opacity: 0.95;
-    transition: opacity .12s linear;
-    background: radial-gradient(circle at center, rgba(80,200,255,0.10) 0%, rgba(40,160,220,0.06) 25%, rgba(0,0,0,0) 60%);
-  }
-
-  /* small subtle overlay to amplify spotlight (cheap) */
-  .spotlight::after{
+  /* Animated "pulse" via filter brightness using CSS variable (updated from JS on cursor activity) */
+  body::after{
     content:"";
-    position:absolute; inset:0;
-    background: radial-gradient(circle at 40% 30%, rgba(255,140,0,0.02), transparent 30%);
+    position:fixed; inset:0; pointer-events:none;
+    backdrop-filter: saturate(1.06) blur(0px);
+    mix-blend-mode: overlay;
+    opacity:0.08;
+    transition:opacity .25s linear;
+  }
+
+  /* spotlight that follows cursor - GPU-friendly transforms */
+  .spotlight{
+    position:fixed; left:0; top:0;
+    width:520px; height:520px;
     pointer-events:none;
+    transform: translate3d(-9999px,-9999px,0);
+    z-index:2;
+    mix-blend-mode: screen;
+    filter: blur(36px);
+    background: radial-gradient(circle at center, rgba(80,200,255,0.10) 0%, rgba(40,160,220,0.06) 25%, rgba(0,0,0,0) 60%);
+    transition: opacity .12s linear;
   }
 
   /* topbar */
   .topbar{
-    position:fixed;
-    top:14px; left:50%;
+    position:fixed; top:14px; left:50%;
     transform:translateX(-50%);
     width:min(1200px, calc(100% - 40px));
-    display:flex; align-items:center; justify-content:space-between;
-    gap:12px; z-index:var(--ui-z); pointer-events:none;
+    display:flex; align-items:center; justify-content:space-between; gap:12px; z-index:var(--ui-z); pointer-events:none;
   }
   .corner{ display:flex; gap:12px; align-items:center; pointer-events:auto; }
 
   .logo{
-    font-family:"Baloo 2",Inter,sans-serif;
-    font-weight:600;
-    font-size:20px;
-    padding:6px 12px;
-    border-radius:999px;
+    font-family:"Baloo 2",Inter;
+    font-weight:600; font-size:20px; padding:6px 12px; border-radius:999px;
     background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.00));
-    border:1px solid rgba(255,255,255,0.04);
-    color:#fff;
-    display:inline-flex; align-items:center; gap:8px;
-    cursor:pointer; user-select:none;
-    box-shadow: 0 6px 14px rgba(255,136,0,0.03) inset;
-    transition: transform .18s cubic-bezier(.2,.9,.2,1);
+    border:1px solid rgba(255,255,255,0.04); color:#fff; display:inline-flex; align-items:center; gap:8px;
+    cursor:pointer; user-select:none; box-shadow: 0 6px 12px rgba(255,136,0,0.03) inset; transition: transform .18s cubic-bezier(.2,.9,.2,1);
   }
-  .chip { font-size:12px; padding:3px 8px; border-radius:999px; color:var(--accent); font-weight:700;
-         background: linear-gradient(90deg, rgba(255,136,0,0.06), rgba(255,255,255,0.01)); }
+  .chip{ font-size:12px; padding:3px 8px; border-radius:999px; color:var(--accent); font-weight:700; background: linear-gradient(90deg, rgba(255,136,0,0.06), rgba(255,255,255,0.01)); }
 
   /* center nav */
-  .navbar { display:flex; gap:16px; align-items:center; pointer-events:auto; }
-  .tab {
-    padding:10px 16px; border-radius:12px;
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    backdrop-filter: blur(12px) saturate(120%);
-    color:#bfefff; font-weight:700;
-    cursor:pointer; transition: transform .16s ease, background .16s ease;
-    position:relative;
-  }
+  .navbar{ display:flex; gap:16px; align-items:center; pointer-events:auto; }
+  .tab{ padding:10px 16px; border-radius:12px; background:var(--glass-bg); border:1px solid var(--glass-border); backdrop-filter: blur(12px) saturate(120%); color:#bfefff; font-weight:700; cursor:pointer; transition: transform .16s ease, background .16s ease; position:relative; display:flex; align-items:center; gap:8px; }
   .tab:hover{ transform:translateY(-3px); background: rgba(255,255,255,0.08); color:#fff; }
 
-  .tab-content {
-    position:absolute; top:56px; left:50%; transform:translateX(-50%) translateY(-8px) scale(.98);
-    width:320px; padding:14px; border-radius:14px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
-    border: 1px solid rgba(255,255,255,0.08);
-    backdrop-filter: blur(16px) saturate(120%);
-    box-shadow: 0 12px 36px rgba(2,6,23,0.6);
-    color:var(--panel-text); text-align:center;
-    opacity:0; pointer-events:none; transform-origin:top center; transition: all .22s cubic-bezier(.2,.9,.2,1);
-    z-index: calc(var(--ui-z) + 10);
+  .tab .arrow{ font-size:12px; transform-origin:center; transition: transform .24s cubic-bezier(.2,.9,.2,1); color:#e9fbff; opacity:0.9; }
+
+  .tab-content{
+    position:absolute; top:56px; left:50%; transform:translateX(-50%) translateY(-8px) scale(.98); width:320px; padding:14px; border-radius:14px; background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)); border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(18px) saturate(120%); box-shadow: 0 12px 36px rgba(2,6,23,0.6); color:var(--panel-text); text-align:center; opacity:0; pointer-events:none; transform-origin:top center; transition: all .22s cubic-bezier(.2,.9,.2,1); z-index: calc(var(--ui-z)+10);
   }
-  .tab.active .tab-content { opacity:1; pointer-events:auto; transform:translateX(-50%) translateY(0) scale(1); }
+  .tab.active .tab-content{ opacity:1; pointer-events:auto; transform:translateX(-50%) translateY(0) scale(1); }
+  .tab-content p{ margin:0; font-size:.95rem; line-height:1.35; color:var(--panel-text) }
 
   /* status */
-  .status { display:flex; gap:8px; align-items:center; font-weight:700; color:var(--status-yellow); font-size:14px;
-           background: linear-gradient(180deg, rgba(255,209,102,0.03), rgba(255,209,102,0.01));
-           border-radius:12px; padding:6px 10px; border:1px solid rgba(255,209,102,0.08); pointer-events:auto; }
-  .status-dot{ width:10px; height:10px; border-radius:50%; background:var(--status-yellow); box-shadow:0 0 8px rgba(255,209,102,0.45); animation:blink 1.2s infinite; }
-  @keyframes blink{ 0%{opacity:1} 50%{opacity:.2} 100%{opacity:1} }
+  .status{ display:flex; gap:8px; align-items:center; font-weight:700; color:var(--status-yellow); font-size:14px; background: linear-gradient(180deg, rgba(255,209,102,0.03), rgba(255,209,102,0.01)); border-radius:12px; padding:6px 10px; border:1px solid rgba(255,209,102,0.08); pointer-events:auto; }
+  .status-dot{ width:10px; height:10px; border-radius:50%; background:var(--status-yellow); box-shadow:0 0 8px rgba(255,209,102,0.45); }
+  .status-dot.flicker { animation: flicker 1s linear; }
+  @keyframes flicker{ 0%{opacity:1}20%{opacity:.1}40%{opacity:1}60%{opacity:.15}80%{opacity:1}100%{opacity:1} }
 
-  /* stage + card zone */
-  .stage { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; z-index:var(--ui-z); pointer-events:none; }
-  .card-zone { position:relative; width:760px; height:520px; display:flex; align-items:center; justify-content:center; pointer-events:auto; z-index:calc(var(--ui-z)+1); }
+  /* stage & card zone */
+  .stage{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; z-index:var(--ui-z); pointer-events:none; }
+  .card-zone{ position:relative; width:760px; height:520px; display:flex; align-items:center; justify-content:center; pointer-events:auto; z-index:calc(var(--ui-z)+1); }
+
+  /* shadow parallax behind card (separate element for performance) */
+  .card-shadow{
+    position:absolute; width:540px; height:360px; border-radius:26px; background: radial-gradient(ellipse at center, rgba(0,60,90,0.14), rgba(0,0,0,0)); filter: blur(40px); z-index:calc(var(--ui-z)); pointer-events:none; transition: opacity .18s ease;
+  }
 
   /* center card (glass unified) */
-  .center-card {
-    width:520px; height:320px; border-radius:20px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
-    border:1px solid rgba(255,255,255,0.12);
-    backdrop-filter: blur(14px) saturate(120%);
-    box-shadow:0 18px 50px rgba(3,6,23,0.6);
-    display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:28px;
-    transition: box-shadow .18s ease, transform .12s ease; pointer-events:auto;
+  .center-card{
+    width:520px; height:320px; border-radius:20px; background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02)); border:1px solid rgba(255,255,255,0.12); backdrop-filter: blur(14px) saturate(120%); box-shadow:0 18px 50px rgba(3,6,23,0.6); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:28px; transition: box-shadow .18s ease, transform .12s ease; pointer-events:auto; position:relative; overflow:visible;
   }
-  .center-card h2 { margin:0; font-family:"Baloo 2",Inter; font-size:2.1rem; color:var(--accent); }
-  .center-card p { margin-top:10px; margin-bottom:18px; font-size:1.05rem; color:var(--panel-text); max-width:86%; line-height:1.35; }
-  .center-card .name { position:absolute; bottom:16px; font-size:.95rem; color:#ffdcb3; font-weight:600; }
+  .center-card h2{ margin:0; font-family:"Baloo 2",Inter; font-size:2.1rem; color:var(--accent); text-shadow: 0 6px 18px rgba(255,136,0,0.08); }
+  .center-card p{ margin-top:10px; margin-bottom:18px; font-size:1.05rem; color:var(--panel-text); max-width:86%; line-height:1.35; }
+  .center-card .name{ position:absolute; bottom:16px; font-size:.95rem; color:#ffdcb3; font-weight:600; cursor:pointer; user-select:none; }
+  .center-card.hover-glow{ box-shadow: 0 30px 70px rgba(255,136,0,0.12); }
 
-  .center-card.hover-glow { box-shadow: 0 30px 70px rgba(255,136,0,0.12); }
+  /* cursor glow */
+  .cursor-glow{ position:fixed; left:0; top:0; width:120px; height:120px; border-radius:50%; pointer-events:none; transform:translate3d(-9999px,-9999px,0); z-index:4; background: radial-gradient(circle, rgba(255,140,0,0.28) 0%, rgba(255,140,0,0.12) 20%, rgba(0,180,255,0.06) 40%, rgba(0,0,0,0) 70%); filter: blur(20px); mix-blend-mode: screen; transition:opacity .12s linear, width .12s ease, height .12s ease; }
 
-  /* cursor glow (soft follow) placed under UI */
-  .cursor-glow {
-    position: fixed;
-    left:0; top:0;
-    width: 120px; height: 120px;
-    border-radius: 50%;
-    pointer-events: none;
-    transform: translate3d(-9999px,-9999px,0);
-    z-index:4; /* under topbar/ui but above background */
-    background: radial-gradient(circle, rgba(255,140,0,0.28) 0%, rgba(255,140,0,0.12) 20%, rgba(0,180,255,0.06) 40%, rgba(0,0,0,0) 70%);
-    filter: blur(20px);
-    mix-blend-mode: screen;
-    transition: width .12s ease, height .12s ease, opacity .12s ease;
-  }
+  /* bottom messages (easter eggs) */
+  .bottom-msg { position:fixed; left:50%; transform:translateX(-50%); bottom:24px; z-index:999; background: rgba(0,0,0,0.45); color:#dff8ff; padding:8px 14px; border-radius:12px; font-size:13px; backdrop-filter: blur(8px); box-shadow: 0 8px 24px rgba(0,0,0,0.45); opacity:0; pointer-events:none; transition:opacity .18s ease; }
+
+  /* 67 badge */
+  .badge-67{ position:fixed; left:50%; transform:translateX(-50%); bottom:60px; font-size:18px; color:rgba(255,255,255,0.9); background: rgba(0,0,0,0.5); padding:6px 10px; border-radius:10px; opacity:0; transition:opacity .12s ease; z-index:9999; pointer-events:none;}
 
   /* confetti canvas on top */
-  #confetti { position:fixed; inset:0; z-index:9999; pointer-events:none; }
+  #confetti { position:fixed; inset:0; z-index:9998; pointer-events:none; }
 
-  /* responsiveness */
+  /* small load animations */
+  .loading .topbar{ transform:translateY(-6px); opacity:0 }
+  .loading .center-card{ transform: translateY(18px) scale(.98); opacity:0 }
+  .loading .logo{ transform: translateY(-6px) scale(.98); opacity:0 }
+  .loaded .topbar, .loaded .center-card, .loaded .logo{ opacity:1; transform:none; transition: all .6s cubic-bezier(.2,.9,.2,1); }
+
   @media (max-width:760px){
-    .center-card{ width:92%; height:auto; padding:22px; }
-    .card-zone{ width:92%; height:420px; }
-    .topbar{ width: calc(100% - 20px); left:50%; transform:translateX(-50%); top:12px; }
-    .spotlight{ width:360px; height:360px; }
+    .center-card{ width:92%; height:auto; padding:22px }
+    .card-zone{ width:92%; height:420px }
+    .spotlight{ width:360px; height:360px }
   }
 </style>
 </head>
-<body>
+<body class="loading">
 
 <!-- spotlight -->
-<div class="spotlight" id="spotlight"></div>
+<div class="spotlight" id="spotlight" style="opacity:0"></div>
 
 <!-- topbar -->
 <div class="topbar" role="banner">
@@ -179,149 +143,180 @@
   </div>
 
   <nav class="navbar" role="navigation" aria-label="Main nav">
-    <div class="tab" data-key="gd">Game Development
-      <div class="tab-content"><p>Prototypes, gameplay notes, and in-progress builds — click to preview.</p></div>
+    <div class="tab" data-key="gd">Game Development <span class="arrow">▾</span>
+      <div class="tab-content"><p>Prototypes, gameplay notes and in-progress builds — click to preview.</p></div>
     </div>
-    <div class="tab" data-key="w3">WEB3
+    <div class="tab" data-key="w3">WEB3 <span class="arrow">▾</span>
       <div class="tab-content"><p>Smart contract experiments and token UX ideas — work in progress.</p></div>
     </div>
-    <div class="tab" data-key="ed">Editing
-      <div class="tab-content"><p>Video edits, workflow notes, and visual process snapshots.</p></div>
+    <div class="tab" data-key="ed">Editing <span class="arrow">▾</span>
+      <div class="tab-content"><p>Video edits, workflow notes and visual process snapshots.</p></div>
     </div>
   </nav>
 
   <div class="corner" style="justify-content:flex-end;">
-    <div class="status"><div class="status-dot" aria-hidden="true"></div><div>Under Development</div></div>
+    <div class="status" id="statusToggle"><div class="status-dot" id="statusDot"></div><div>Under Development</div></div>
   </div>
 </div>
 
-<!-- stage with card zone -->
-<div class="stage" aria-hidden="false">
+<!-- stage -->
+<div class="stage">
   <div class="card-zone" id="cardZone">
+    <div class="card-shadow" id="cardShadow" style="opacity:0.9"></div>
     <div class="center-card" id="card" role="main" aria-label="Cheeku main card">
       <h2>Welcome to Cheeku's Space</h2>
       <p>Something new is taking shape.</p>
-      <div class="name">Mithun M Murthy</div>
+      <div class="name" id="nameBtn">Mithun M Murthy</div>
     </div>
   </div>
 </div>
 
-<!-- background and UI cursors -->
-<div class="cursor-glow" id="cursorGlow"></div>
+<!-- UI cursors -->
+<div class="cursor-glow" id="cursorGlow" style="opacity:0"></div>
 
 <!-- confetti canvas -->
 <canvas id="confetti"></canvas>
 
-<script>
-/* --------- Efficient spotlight & cursor glow (Option C) ----------
-   Approach:
-   - Track mouse move (cheap)
-   - Use RAF loop to lerp DOM transforms for smooth, low-cost motion
-   - Spotlight element positioned with translate3d (GPU)
-   - Cursor glow is a single DOM element under UI
-------------------------------------------------------------------*/
-const spotlight = document.getElementById('spotlight');
-const cursorGlow = document.getElementById('cursorGlow');
-let mouse = { x: -9999, y: -9999 };
-let px = -9999, py = -9999; // previous (for lerp)
-const ease = 0.16;
+<!-- bottom messages -->
+<div class="bottom-msg" id="bottomMsg"></div>
+<div class="badge-67" id="badge67">67</div>
 
-window.addEventListener('mousemove', (e)=> {
-  mouse.x = e.clientX;
-  mouse.y = e.clientY;
-  // make spotlight visible
-  spotlight.style.opacity = '0.95';
-  cursorGlow.style.opacity = '1';
+<script>
+/* ========================
+   Lightweight optimized JS
+   - RAF loops: cursor/spotlight + card interpolation
+   - confetti via canvas (single run, small count)
+   - event-driven easter eggs + dropdowns
+   ========================*/
+
+/* Basic helpers */
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+function lerp(a,b,t){return a + (b-a) * t}
+
+/* Elements */
+const spotlight = $('#spotlight');
+const cursorGlow = $('#cursorGlow');
+const logo = $('#logoBtn');
+const confettiCanvas = $('#confetti');
+const card = $('#card');
+const cardZone = $('#cardZone');
+const cardShadow = $('#cardShadow');
+const tabs = $$('.tab');
+const statusDot = $('#statusDot');
+const bottomMsg = $('#bottomMsg');
+const badge67 = $('#badge67');
+const body = document.body;
+
+/* ---------- Loading intro ---------- */
+window.addEventListener('load', ()=> {
+  setTimeout(()=>{
+    body.classList.remove('loading');
+    body.classList.add('loaded');
+    // fade in elements nicely by removing inline style - css handles transitions
+  }, 220); // small delay
 });
 
-// hide when leaving window
+/* ---------- spotlight & cursor glow (single RAF) ---------- */
+let mouse = {x:-9999, y:-9999};
+let cx = -9999, cy = -9999;
+const ease = 0.16; // for lerp
+
+window.addEventListener('mousemove', (e)=> {
+  mouse.x = e.clientX; mouse.y = e.clientY;
+  spotlight.style.opacity = '0.95';
+  cursorGlow.style.opacity = '1';
+  // update brightness/pulse target: small spike on movement
+  pulseTarget = 1.06;
+  lastMoveAt = performance.now();
+});
+
 window.addEventListener('mouseleave', ()=> {
   spotlight.style.opacity = '0';
   cursorGlow.style.opacity = '0';
 });
 
-// RAF loop - lerp positions
-function rafLoop(){
-  px += (mouse.x - px) * ease;
-  py += (mouse.y - py) * ease;
+let lastMoveAt = 0, pulseTarget = 1;
+function rafMain(){
+  cx = lerp(cx, mouse.x, ease);
+  cy = lerp(cy, mouse.y, ease);
 
-  // place spotlight slightly offset and larger
-  const spotX = px - (spotlight.offsetWidth/2);
-  const spotY = py - (spotlight.offsetHeight/2);
-  spotlight.style.transform = `translate3d(${Math.round(spotX)}px, ${Math.round(spotY)}px, 0)`;
+  // translate spotlight and cursor glow
+  spotlight.style.transform = `translate3d(${Math.round(cx - spotlight.offsetWidth/2)}px, ${Math.round(cy - spotlight.offsetHeight/2)}px, 0)`;
+  cursorGlow.style.transform = `translate3d(${Math.round(cx - cursorGlow.offsetWidth/2)}px, ${Math.round(cy - cursorGlow.offsetHeight/2)}px, 0)`;
 
-  // cursor glow follows closer (smaller lag)
-  const glowX = px - (cursorGlow.offsetWidth/2);
-  const glowY = py - (cursorGlow.offsetHeight/2);
-  cursorGlow.style.transform = `translate3d(${Math.round(glowX)}px, ${Math.round(glowY)}px, 0)`;
+  // slowly decay pulseTarget to 1
+  pulseTarget += (1 - pulseTarget) * 0.05;
+  // map to a small brightness effect by changing body opacity overlay via custom property
+  const pulse = 1 + (pulseTarget - 1) * 0.18;
+  body.style.setProperty('--pulse', pulse);
 
-  requestAnimationFrame(rafLoop);
+  requestAnimationFrame(rafMain);
 }
-requestAnimationFrame(rafLoop);
+requestAnimationFrame(rafMain);
 
-/* -------------------------
-   Tabs behavior (glass)
--------------------------*/
-const tabs = document.querySelectorAll('.tab');
+/* ---------- Tabs with arrow rotation ---------- */
 tabs.forEach(tab => {
+  const arrow = tab.querySelector('.arrow');
   tab.addEventListener('click', (ev) => {
+    ev.stopPropagation();
     const active = tab.classList.contains('active');
     tabs.forEach(t => t.classList.remove('active'));
-    if (!active) tab.classList.add('active');
+    if(!active){
+      tab.classList.add('active');
+      if(arrow) arrow.style.transform = 'rotate(180deg)';
+    } else {
+      if(arrow) arrow.style.transform = '';
+    }
+    // reset others arrows
+    tabs.forEach(t => { if(t !== tab){ const a = t.querySelector('.arrow'); if(a) a.style.transform = '' }});
   });
 });
-// close on outside click
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('.tab')) tabs.forEach(t => t.classList.remove('active'));
+document.addEventListener('click', (e)=> {
+  if(!e.target.closest('.tab')) {
+    tabs.forEach(t => t.classList.remove('active'));
+    $$('.tab .arrow').forEach(a => a.style.transform = '');
+  }
 });
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') tabs.forEach(t=>t.classList.remove('active')) });
 
-
-/* -------------------------
-   Proximity-based card interaction (capped tilt)
-   - larger invisible cardZone triggers movement
-   - tilt capped to +/-12deg
--------------------------*/
-const cardZone = document.getElementById('cardZone');
-const card = document.getElementById('card');
-
-let zoneState = { rx:0, ry:0, tx:0, ty:0, scale:1 };
-let anim = { rx:0, ry:0, tx:0, ty:0, scale:1 };
-
-function lerp(a,b,t){ return a + (b-a)*t; }
+/* ---------- Card proximity/parallax + shadow parallax ---------- */
+let zoneState = {rx:0, ry:0, tx:0, ty:0, scale:1};
+let anim = {rx:0, ry:0, tx:0, ty:0, scale:1};
+const maxTilt = 12; // capped
 
 function onZoneMove(e){
   const r = card.getBoundingClientRect();
-  const cx = r.left + r.width/2;
-  const cy = r.top + r.height/2;
-  const dx = (e.clientX - cx) / (r.width/2); // -1..1
-  const dy = (e.clientY - cy) / (r.height/2); // -1..1
-
-  // non-linear sensitivity so center reacts too but controlled
+  const cxCard = r.left + r.width/2;
+  const cyCard = r.top + r.height/2;
+  const dx = (e.clientX - cxCard) / (r.width/2); // -1..1
+  const dy = (e.clientY - cyCard) / (r.height/2); // -1..1
   const sx = Math.sign(dx) * Math.pow(Math.abs(dx), 1.4);
   const sy = Math.sign(dy) * Math.pow(Math.abs(dy), 1.4);
-
-  // capped tilt values (±12°)
-  const maxTilt = 12;
   zoneState.ry = Math.max(-maxTilt, Math.min(maxTilt, sx * maxTilt));
   zoneState.rx = Math.max(-maxTilt, Math.min(maxTilt, -sy * maxTilt));
-  zoneState.tx = sx * 8; // small translate
+  zoneState.tx = sx * 8;
   zoneState.ty = sy * 6;
   zoneState.scale = 1.03;
-
   card.classList.add('hover-glow');
+
+  // shadow moves opposite direction slightly
+  const shadowX = -sx * 18;
+  const shadowY = -sy * 10;
+  cardShadow.style.transform = `translate3d(${shadowX}px, ${shadowY}px, 0)`;
+  cardShadow.style.opacity = '0.95';
 }
 function onZoneLeave(){
-  zoneState = { rx:0, ry:0, tx:0, ty:0, scale:1 };
+  zoneState = {rx:0, ry:0, tx:0, ty:0, scale:1};
   card.classList.remove('hover-glow');
+  cardShadow.style.opacity = '0.7';
 }
 
 cardZone.addEventListener('mousemove', onZoneMove);
 cardZone.addEventListener('mouseleave', onZoneLeave);
 
-// animate card with RAF smooth interpolation
+// animate card state
 (function animateCard(){
-  const easeCard = 0.14;
+  const easeCard = 0.12;
   anim.rx = lerp(anim.rx, zoneState.rx, easeCard);
   anim.ry = lerp(anim.ry, zoneState.ry, easeCard);
   anim.tx = lerp(anim.tx, zoneState.tx, easeCard);
@@ -331,47 +326,34 @@ cardZone.addEventListener('mouseleave', onZoneLeave);
   requestAnimationFrame(animateCard);
 })();
 
-card.addEventListener('click', ()=>{
-  // small pulse
-  const prev = zoneState.scale;
-  zoneState.scale = 1.06;
-  setTimeout(()=> zoneState.scale = prev, 140);
-});
-
-/* -------------------------
-   Logo click: jump + confetti
--------------------------*/
-const logo = document.getElementById('logoBtn');
-const confettiCanvas = document.getElementById('confetti');
+/* ---------- Confetti from logo (optimized, single instance at a time) ---------- */
 confettiCanvas.width = innerWidth; confettiCanvas.height = innerHeight;
 window.addEventListener('resize', ()=> { confettiCanvas.width = innerWidth; confettiCanvas.height = innerHeight; });
 
-logo.addEventListener('click', ()=> {
-  // jump + shake
-  logo.animate([
-    { transform: 'translateY(0)' },
-    { transform: 'translateY(-10px) rotate(-4deg)' },
-    { transform: 'translateY(0px) rotate(4deg)' },
-    { transform: 'translateY(0)' }
-  ], { duration: 420, easing: 'cubic-bezier(.2,.8,.2,1)' });
-
-  // confetti burst (lightweight)
-  runConfetti();
+let confettiActive = false;
+logo.addEventListener('click', (e)=>{
+  if(confettiActive) return; // ignore while active
+  confettiActive = true;
+  // small jump animation on logo
+  logo.animate([{transform:'translateY(0)'},{transform:'translateY(-10px) rotate(-4deg)'},{transform:'translateY(2px) rotate(4deg)'},{transform:'translateY(0)'}], {duration:420, easing:'cubic-bezier(.2,.8,.2,1)'});
+  // spawn confetti at logo center
+  const rect = logo.getBoundingClientRect();
+  const startX = rect.left + rect.width/2;
+  const startY = rect.top + rect.height/2;
+  runConfetti(startX, startY, ()=>{ confettiActive = false; });
 });
 
-/* ---------- lightweight confetti ----------
-   Small burst for ~700ms, few particles to avoid lag.
--------------------------------------------*/
-function runConfetti(){
+// confetti implementation (small, efficient)
+function runConfetti(cx, cy, onDone){
   const ctx = confettiCanvas.getContext('2d');
   const pieces = [];
-  const count = 42;
+  const count = 20; // small, optimized
   const start = performance.now();
   for(let i=0;i<count;i++){
     pieces.push({
-      x: (window.innerWidth/2) - 40 + (Math.random()*160),
-      y: 90 + (Math.random()*20),
-      vx: (Math.random()-0.5) * 6,
+      x: cx + (Math.random()-0.5) * 40,
+      y: cy + (Math.random()-0.5) * 12,
+      vx: (Math.random()-0.5) * 4,
       vy: -6 - Math.random()*4,
       r: 6 + Math.random()*6,
       color: ['#ff6b6b','#ffd166','#4ecdc4','#ffd1ff','#ffb86b'][Math.floor(Math.random()*5)],
@@ -379,18 +361,13 @@ function runConfetti(){
       drot: (Math.random()-0.5)*8
     });
   }
-
   function frame(now){
     const t = now - start;
     ctx.clearRect(0,0,confettiCanvas.width, confettiCanvas.height);
     for(let i=0;i<pieces.length;i++){
       const p = pieces[i];
-      // integrate
-      p.vy += 0.24; // gravity
-      p.x += p.vx;
-      p.y += p.vy;
-      p.rot += p.drot;
-      // draw
+      p.vy += 0.22; // gravity
+      p.x += p.vx; p.y += p.vy; p.rot += p.drot;
       ctx.save();
       ctx.translate(p.x, p.y);
       ctx.rotate(p.rot * Math.PI/180);
@@ -398,15 +375,60 @@ function runConfetti(){
       ctx.fillRect(-p.r/2, -p.r/2, p.r, p.r*0.6);
       ctx.restore();
     }
-    if(t < 900) requestAnimationFrame(frame);
-    else { ctx.clearRect(0,0,confettiCanvas.width, confettiCanvas.height); }
+    if(t < 7500) requestAnimationFrame(frame);
+    else { ctx.clearRect(0,0,confettiCanvas.width, confettiCanvas.height); onDone(); }
   }
   requestAnimationFrame(frame);
 }
 
-/* -------------------------
-   Perf notes: lightweight, no heavy loops aside from two RAFs
--------------------------*/
+/* ---------- Under Development click easter egg (flicker dot) ---------- */
+const statusBox = $('#statusToggle');
+statusBox.addEventListener('click', (e)=>{
+  // animate dot flicker for 1s
+  statusDot.classList.add('flicker');
+  setTimeout(()=> statusDot.classList.remove('flicker'), 1000);
+});
+
+/* ---------- Clicking "Mithun M Murthy" shows subtle 67 ---------- */
+const nameBtn = $('#nameBtn');
+nameBtn.addEventListener('click', ()=>{
+  badge67.style.opacity = '1';
+  setTimeout(()=> { badge67.style.opacity = '0'; }, 2000);
+});
+
+/* ---------- Background 3-click text Easter egg ----------
+   show cheeky messages at bottom, rotates through messages
+-------------------------------------------------------*/
+let bgClicks = 0;
+let bgClickTimer = null;
+const bgMessages = ["there's nothing to click here.", "no button here.", "try clicking the logo instead 😉"];
+
+document.addEventListener('click', (e)=>{
+  // consider clicks on background only (not on any pointer-enabled UI)
+  if(e.target.closest('.tab') || e.target.closest('.center-card') || e.target.closest('.logo') || e.target.closest('.status')) return;
+  bgClicks++;
+  if(bgClickTimer) clearTimeout(bgClickTimer);
+  bgClickTimer = setTimeout(()=>{ bgClicks = 0; }, 800);
+  if(bgClicks >= 3){
+    bgClicks = 0;
+    // pick random message
+    const msg = bgMessages[Math.floor(Math.random() * bgMessages.length)];
+    bottomMsg.textContent = msg;
+    bottomMsg.style.opacity = '1';
+    setTimeout(()=> bottomMsg.style.opacity = '0', 2000);
+  }
+});
+
+/* ---------- Cursor glow size adjust on mousedown for feedback ---------- */
+window.addEventListener('mousedown', ()=> { cursorGlow.style.width = '160px'; cursorGlow.style.height = '160px'; });
+window.addEventListener('mouseup', ()=> { cursorGlow.style.width = '120px'; cursorGlow.style.height = '120px'; });
+
+/* ---------- Prevent multiple heavy loops - we only run one main RAF + confetti when needed ---------- */
+
+/* ---------- Accessibility small niceties ---------- */
+document.addEventListener('keydown', (e)=> {
+  if(e.key === 'Escape') tabs.forEach(t => t.classList.remove('active'));
+});
 
 </script>
 </body>
