@@ -1,143 +1,270 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Cheeku fun — Under Development</title>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --accent:#ff8800;
-    --status-yellow:#ffd166;
-    --status-red:#ff5c5c;
-    --glass-bg: rgba(255,255,255,0.06);
-    --glass-border: rgba(255,255,255,0.10);
-    --panel-text:#eafcff;
-    --ui-z:60;
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial;color:#fff;-webkit-font-smoothing:antialiased}
-  body{
-    overflow:hidden;
-    background: linear-gradient(120deg,#071227 0%,#082033 35%,#0b1630 65%,#071227 100%);
-    background-size:200% 200%;
-    animation:bgShift 20s linear infinite;
-  }
-  @keyframes bgShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cheeku Fun</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      overflow: hidden;
+      font-family: "Poppins", sans-serif;
+      background: radial-gradient(circle at center, #0a0a0a, #111);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      color: white;
+    }
 
-  /* topbar layout */
-  .topbar {
-    position:fixed; top:14px; left:0; right:0; z-index:var(--ui-z);
-    height:48px; pointer-events:none;
-  }
-  .topbar-inner {
-    width:min(1200px, calc(100% - 40px)); margin:0 auto; height:100%;
-    display:flex; align-items:center; justify-content:space-between; position:relative;
-  }
+    /* TOP BAR */
+    .top-bar {
+      position: absolute;
+      top: 20px;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 60px;
+      z-index: 10;
+    }
 
-  .left, .right { display:flex; align-items:center; gap:12px; pointer-events:auto; }
-  .center { position:absolute; left:50%; transform:translateX(-50%); display:flex; gap:16px; align-items:center; pointer-events:auto; }
+    .logo {
+      font-size: 1.6em;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+      color: #fff;
+      transition: transform 0.2s ease;
+    }
 
-  .logo{
-    font-family:"Baloo 2",Inter; font-weight:600; font-size:20px; padding:6px 12px; border-radius:999px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.00));
-    border:1px solid rgba(255,255,255,0.04); color:#fff; display:inline-flex; align-items:center; gap:8px;
-    cursor:pointer; user-select:none; box-shadow: 0 6px 12px rgba(255,136,0,0.03) inset; transition: transform .18s cubic-bezier(.2,.9,.2,1);
-  }
-  .chip{ font-size:12px; padding:3px 8px; border-radius:999px; color:var(--accent); font-weight:700; background: linear-gradient(90deg, rgba(255,136,0,0.06), rgba(255,255,255,0.01)); }
+    .tabs {
+      display: flex;
+      gap: 50px;
+      font-size: 1em;
+      backdrop-filter: blur(12px);
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 10px 30px;
+    }
 
-  .tab{ padding:10px 16px; border-radius:12px; background:var(--glass-bg); border:1px solid var(--glass-border); backdrop-filter: blur(12px) saturate(120%); color:#bfefff; font-weight:700; cursor:pointer; transition: transform .16s ease, background .16s ease; position:relative; display:flex; align-items:center; gap:8px; }
-  .tab:hover{ transform:translateY(-3px); background: rgba(255,255,255,0.08); color:#fff; }
-  .tab .arrow{ font-size:12px; transform-origin:center; transition: transform .24s cubic-bezier(.2,.9,.2,1); color:#e9fbff; opacity:0.95; }
+    .tab {
+      cursor: pointer;
+      transition: color 0.3s;
+    }
 
-  .tab-content{
-    position:absolute; top:56px; left:50%; transform:translateX(-50%) translateY(-8px) scale(.98); width:320px; padding:14px; border-radius:14px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
-    border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(18px) saturate(120%); box-shadow: 0 12px 36px rgba(2,6,23,0.6);
-    color:var(--panel-text); text-align:center; opacity:0; pointer-events:none; transform-origin:top center; transition: all .22s cubic-bezier(.2,.9,.2,1);
-    z-index: calc(var(--ui-z)+10);
-  }
-  .tab.active .tab-content{ opacity:1; pointer-events:auto; transform:translateX(-50%) translateY(0) scale(1); }
+    .tab:hover {
+      color: #ffae42;
+    }
 
-  .status{ display:flex; gap:8px; align-items:center; font-weight:700; color:var(--status-yellow); font-size:14px; background: linear-gradient(180deg, rgba(255,209,102,0.03), rgba(255,209,102,0.01)); border-radius:12px; padding:6px 10px; border:1px solid rgba(255,209,102,0.08); pointer-events:auto; cursor:pointer; }
-  .status-dot{ width:10px; height:10px; border-radius:50%; background:var(--status-yellow); box-shadow:0 0 8px rgba(255,209,102,0.45); animation: slowBlink 2s infinite ease-in-out; transition: background .25s ease, box-shadow .25s ease; }
-  @keyframes slowBlink { 0%,100%{opacity:1;} 50%{opacity:0.2;} }
-  @keyframes fastBlink { 0%,100%{opacity:1;} 25%,75%{opacity:0.2;} }
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 1em;
+      color: yellow;
+      cursor: pointer;
+    }
 
-  /* stage & card */
-  .stage{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; z-index:var(--ui-z); pointer-events:none; }
-  .card-zone{ position:relative; width:760px; height:520px; display:flex; align-items:center; justify-content:center; pointer-events:auto; z-index:calc(var(--ui-z)+1); }
+    .dot {
+      width: 10px;
+      height: 10px;
+      background: yellow;
+      border-radius: 50%;
+      animation: blink 1.5s infinite;
+      transition: background 0.3s;
+    }
 
-  .card-shadow{
-    position:absolute; width:540px; height:360px; border-radius:26px; background: radial-gradient(ellipse at center, rgba(0,60,90,0.14), rgba(0,0,0,0)); filter: blur(40px); z-index:calc(var(--ui-z)); pointer-events:none;
-  }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
 
-  .center-card{
-    width:520px; height:320px; border-radius:20px; background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02)); border:1px solid rgba(255,255,255,0.12); backdrop-filter: blur(14px) saturate(120%); box-shadow:0 18px 50px rgba(3,6,23,0.6); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:28px;
-  }
-  .center-card h2{ margin:0; font-family:"Baloo 2",Inter; font-size:2.1rem; color:var(--accent);}
-  .center-card p{ margin-top:10px; margin-bottom:18px; font-size:1.05rem; color:var(--panel-text); }
-  .center-card .name{ position:absolute; bottom:16px; font-size:.95rem; color:#ffdcb3; font-weight:600; cursor:pointer; }
+    @keyframes fastBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
 
-  .bottom-msg{ position:fixed; left:50%; transform:translateX(-50%); bottom:24px; z-index:999; background: rgba(0,0,0,0.45); color:#dff8ff; padding:8px 14px; border-radius:12px; font-size:13px; backdrop-filter: blur(8px); box-shadow: 0 8px 24px rgba(0,0,0,0.45); opacity:0; pointer-events:none; transition:opacity .18s ease, transform .18s ease; }
-  .bottom-msg.show{ opacity:1; transform:translateX(-50%) translateY(0); }
-</style>
+    /* CENTER CARD */
+    .card {
+      text-align: center;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      backdrop-filter: blur(12px);
+      padding: 60px 100px;
+      transition: transform 0.1s ease-out;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      color: #fff;
+    }
+
+    .card h1 {
+      font-size: 2.2em;
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      font-size: 1.1em;
+      opacity: 0.9;
+    }
+
+    .name {
+      margin-top: 20px;
+      font-size: 1em;
+      color: #ffae42;
+      cursor: pointer;
+    }
+
+    /* POPUP MESSAGE */
+    .popup-message {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%) scale(0.8);
+      background: rgba(255, 255, 255, 0.15);
+      padding: 10px 20px;
+      border-radius: 10px;
+      backdrop-filter: blur(8px);
+      color: #fff;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+      font-size: 1em;
+    }
+
+    .popup-message.show {
+      opacity: 1;
+      transform: translateX(-50%) scale(1);
+    }
+  </style>
 </head>
 <body>
+  <div class="top-bar">
+    <div class="logo" id="logo">Cheeku fun</div>
 
-<div class="topbar">
-  <div class="topbar-inner">
-    <div class="left">
-      <div class="logo" id="logoBtn">CHEEKU <span class="chip">fun</span></div>
+    <div class="tabs">
+      <div class="tab">Game Development</div>
+      <div class="tab">WEB3</div>
+      <div class="tab">Editing</div>
     </div>
 
-    <div class="center">
-      <div class="tab">Game Development <span class="arrow">▾</span></div>
-      <div class="tab">WEB3 <span class="arrow">▾</span></div>
-      <div class="tab">Editing <span class="arrow">▾</span></div>
-    </div>
-
-    <div class="right">
-      <div class="status" id="statusBox"><div class="status-dot" id="statusDot"></div><div>Under Development</div></div>
+    <div class="status" id="status">
+      <div class="dot" id="dot"></div>
+      Under Development
     </div>
   </div>
-</div>
 
-<div class="stage">
-  <div class="center-card">
-    <h2>Welcome to Cheeku's Space</h2>
-    <p>Something new is taking shape.</p>
-    <div class="name" id="nameBtn">Mithun M Murthy</div>
+  <div class="card" id="card">
+    <h1>Welcome to Cheeku's space</h1>
+    <p>Something new is taking shape</p>
+    <div class="name" id="name">Mithun M Murthy</div>
   </div>
-</div>
 
-<div class="bottom-msg" id="bottomMsg"></div>
+  <div class="popup-message" id="popup"></div>
 
-<script>
-const statusDot = document.getElementById('statusDot');
-const statusBox = document.getElementById('statusBox');
-let clickCount = 0;
-let timer = null;
+  <canvas id="confettiCanvas"></canvas>
 
-// triple-click red flash logic
-statusBox.addEventListener('click', () => {
-  clickCount++;
-  clearTimeout(timer);
-  timer = setTimeout(() => (clickCount = 0), 700);
-  if (clickCount >= 3) {
-    clickCount = 0;
-    // turn red and blink fast
-    statusDot.style.background = 'var(--status-red)';
-    statusDot.style.boxShadow = '0 0 10px rgba(255,90,90,0.6)';
-    statusDot.style.animation = 'fastBlink 0.4s infinite ease-in-out';
-    setTimeout(() => {
-      // back to yellow slow blink
-      statusDot.style.background = 'var(--status-yellow)';
-      statusDot.style.boxShadow = '0 0 8px rgba(255,209,102,0.45)';
-      statusDot.style.animation = 'slowBlink 2s infinite ease-in-out';
-    }, 1000);
-  }
-});
-</script>
+  <script>
+    /* Confetti */
+    const logo = document.getElementById("logo");
+    const confettiCanvas = document.getElementById("confettiCanvas");
+    const ctx = confettiCanvas.getContext("2d");
+    let confetti = [];
+
+    function resizeCanvas() {
+      confettiCanvas.width = window.innerWidth;
+      confettiCanvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    logo.addEventListener("click", () => {
+      if (confetti.length) return;
+      for (let i = 0; i < 100; i++) {
+        confetti.push({
+          x: window.innerWidth / 10 + Math.random() * 100,
+          y: 50,
+          r: Math.random() * 6 + 2,
+          dx: Math.random() * 4 - 2,
+          dy: Math.random() * 4 + 2,
+          color: `hsl(${Math.random() * 360}, 100%, 50%)`
+        });
+      }
+      setTimeout(() => confetti = [], 3000); // lasts 3s
+    });
+
+    function drawConfetti() {
+      ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+      confetti.forEach(c => {
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
+        ctx.fillStyle = c.color;
+        ctx.fill();
+        c.x += c.dx;
+        c.y += c.dy;
+      });
+      requestAnimationFrame(drawConfetti);
+    }
+    drawConfetti();
+
+    /* Under Development blinking + red alert on 3 clicks */
+    const status = document.getElementById("status");
+    const dot = document.getElementById("dot");
+    let devClickCount = 0;
+
+    status.addEventListener("click", () => {
+      devClickCount++;
+      if (devClickCount === 3) {
+        dot.style.background = "red";
+        dot.style.animation = "fastBlink 0.2s infinite";
+        setTimeout(() => {
+          dot.style.background = "yellow";
+          dot.style.animation = "blink 1.5s infinite";
+        }, 1000);
+        devClickCount = 0;
+      }
+    });
+
+    /* Popup for 67 & stop clicking the void */
+    const popup = document.getElementById("popup");
+    let popupTimeout;
+    function showPopup(text) {
+      popup.textContent = text;
+      popup.classList.add("show");
+      clearTimeout(popupTimeout);
+      popupTimeout = setTimeout(() => {
+        popup.classList.remove("show");
+      }, 2000);
+    }
+
+    /* Name click for 67 after 5 clicks */
+    const nameEl = document.getElementById("name");
+    let nameClickCount = 0;
+    nameEl.addEventListener("click", () => {
+      nameClickCount++;
+      if (nameClickCount >= 5) {
+        showPopup("67");
+        nameClickCount = 0;
+      }
+    });
+
+    /* Background click for stop clicking the void */
+    let bgClickCount = 0;
+    document.body.addEventListener("click", e => {
+      if (
+        e.target.id !== "logo" &&
+        e.target.id !== "status" &&
+        e.target.className !== "tab" &&
+        e.target.id !== "name"
+      ) {
+        bgClickCount++;
+        if (bgClickCount >= 3) {
+          showPopup("stop clicking the void");
+          bgClickCount = 0;
+        }
+      }
+    });
+  </script>
 </body>
 </html>
