@@ -19,29 +19,39 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(120deg, #101020, #1e1e30, #282840);
-    background-size: 400% 400%;
-    animation: bgShift 15s ease infinite;
-    color: white;
+    background: radial-gradient(circle at 30% 30%, #101020, #0a0a12 80%);
     position: relative;
+    color: white;
   }
 
-  @keyframes bgShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+  /* Floating glowing orbs */
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,255,255,0.5), transparent 70%);
+    animation: float 18s infinite ease-in-out;
+    filter: blur(20px);
+    mix-blend-mode: lighten;
+  }
+  .orb:nth-child(1) { width: 300px; height: 300px; top: 10%; left: 10%; animation-delay: 0s; }
+  .orb:nth-child(2) { width: 400px; height: 400px; bottom: 10%; right: 15%; animation-delay: 5s; }
+  .orb:nth-child(3) { width: 250px; height: 250px; bottom: 20%; left: 30%; animation-delay: 10s; }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0) scale(1); opacity: 0.8; }
+    50% { transform: translateY(-40px) scale(1.1); opacity: 1; }
   }
 
-  /* Mouse trail canvas */
+  /* Mouse trail */
   canvas {
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 1;
+    z-index: 2;
     pointer-events: none;
   }
 
-  /* NAVBAR */
+  /* Navbar */
   .navbar {
     position: fixed;
     top: 30px;
@@ -63,13 +73,14 @@
     transition: 0.3s;
     font-weight: 500;
     text-align: center;
+    color: #aee7ff;
   }
 
   .tab:hover {
     background: rgba(255, 255, 255, 0.25);
+    color: white;
   }
 
-  /* Dropdowns */
   .tab-content {
     position: absolute;
     top: 50px;
@@ -95,41 +106,62 @@
   .tab-content p {
     font-size: 0.9rem;
     opacity: 0.9;
+    color: #e5f9ff;
   }
 
-  /* Center Card */
+  /* Center card */
   .center-card {
     position: relative;
-    width: 380px;
-    height: 220px;
+    width: 480px;
+    height: 280px;
     background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(15px);
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(18px);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 0 25px rgba(0, 255, 255, 0.2);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    transition: transform 0.2s ease;
+    transition: transform 0.15s ease-out;
     z-index: 5;
+    text-align: center;
   }
 
   .center-card h2 {
-    font-size: 1.8rem;
-    margin-bottom: 8px;
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: #00e0ff;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
   }
 
   .center-card p {
-    font-size: 1rem;
-    opacity: 0.85;
+    font-size: 1.05rem;
+    color: #eafcff;
+    opacity: 0.95;
+  }
+
+  .center-card .name {
+    position: absolute;
+    bottom: 15px;
+    font-size: 0.95rem;
+    color: #9ce3ff;
+    font-weight: 500;
+    opacity: 0.9;
   }
 </style>
 </head>
 <body>
 
+<!-- Animated background orbs -->
+<div class="orb"></div>
+<div class="orb"></div>
+<div class="orb"></div>
+
+<!-- Canvas for trail -->
 <canvas id="trail"></canvas>
 
-<!-- NAVBAR -->
+<!-- Navbar -->
 <div class="navbar">
   <div class="tab">Game Development
     <div class="tab-content">
@@ -148,14 +180,15 @@
   </div>
 </div>
 
-<!-- CENTER CARD -->
+<!-- Center card -->
 <div class="center-card" id="card">
   <h2>Welcome to Cheeku's Space</h2>
   <p>Something new is taking shape.</p>
+  <div class="name">Mithun M Murthy</div>
 </div>
 
 <script>
-  // --- Mouse Trail Canvas ---
+  // --- Smooth curved trail ---
   const canvas = document.getElementById("trail");
   const ctx = canvas.getContext("2d");
   let w, h;
@@ -166,34 +199,31 @@
   window.addEventListener("resize", resize);
   resize();
 
-  let mouse = { x: 0, y: 0 };
-  const trails = [];
-
+  let points = [];
   document.addEventListener("mousemove", (e) => {
-    mouse.x = e.clientX;
-    mouse.y = e.clientY;
-    trails.push({ x: mouse.x, y: mouse.y, alpha: 1 });
+    points.push({ x: e.clientX, y: e.clientY, alpha: 1 });
+    if (points.length > 50) points.shift();
   });
 
-  function animateTrail() {
+  function drawSmoothTrail() {
     ctx.clearRect(0, 0, w, h);
-    ctx.lineWidth = 6;
+    if (points.length < 2) return requestAnimationFrame(drawSmoothTrail);
+    ctx.lineWidth = 8;
     ctx.lineCap = "round";
-
-    for (let i = 0; i < trails.length - 1; i++) {
-      const p1 = trails[i];
-      const p2 = trails[i + 1];
-      ctx.strokeStyle = `rgba(0, 200, 255, ${p1.alpha})`;
-      ctx.beginPath();
-      ctx.moveTo(p1.x, p1.y);
-      ctx.lineTo(p2.x, p2.y);
-      ctx.stroke();
-      p1.alpha -= 0.02;
-      if (p1.alpha <= 0) trails.splice(i, 1);
+    ctx.strokeStyle = "rgba(0, 220, 255, 0.6)";
+    ctx.beginPath();
+    ctx.moveTo(points[0].x, points[0].y);
+    for (let i = 1; i < points.length - 2; i++) {
+      const xc = (points[i].x + points[i + 1].x) / 2;
+      const yc = (points[i].y + points[i + 1].y) / 2;
+      ctx.quadraticCurveTo(points[i].x, points[i].y, xc, yc);
     }
-    requestAnimationFrame(animateTrail);
+    ctx.stroke();
+    for (let i = 0; i < points.length; i++) points[i].alpha -= 0.02;
+    points = points.filter(p => p.alpha > 0);
+    requestAnimationFrame(drawSmoothTrail);
   }
-  animateTrail();
+  drawSmoothTrail();
 
   // --- Tabs ---
   document.querySelectorAll(".tab").forEach(tab => {
@@ -204,18 +234,34 @@
     });
   });
 
-  // --- Card Parallax ---
+  // --- Improved Parallax Card ---
   const card = document.getElementById("card");
+  let mouseX = 0, mouseY = 0;
+  let cardX = 0, cardY = 0;
+
   card.addEventListener("mousemove", (e) => {
     const rect = card.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    const rotateY = (x / rect.width - 0.5) * 40; // stronger tilt
-    const rotateX = (0.5 - y / rect.height) * 40; // stronger tilt
-    card.style.transform = `rotateY(${rotateY}deg) rotateX(${rotateX}deg) scale(1.05)`;
+    const offsetX = (x - rect.width / 2) / rect.width;
+    const offsetY = (y - rect.height / 2) / rect.height;
+
+    // smoother central sensitivity using cubic curve
+    const smoothX = offsetX * Math.abs(offsetX) * 2;
+    const smoothY = offsetY * Math.abs(offsetY) * 2;
+
+    cardX = smoothX * 40;
+    cardY = -smoothY * 40;
+
+    // small position shift for depth
+    const translateX = smoothX * 20;
+    const translateY = smoothY * 20;
+
+    card.style.transform = `perspective(600px) rotateY(${cardX}deg) rotateX(${cardY}deg) translateX(${translateX}px) translateY(${translateY}px) scale(1.05)`;
   });
+
   card.addEventListener("mouseleave", () => {
-    card.style.transform = "rotateY(0deg) rotateX(0deg) scale(1)";
+    card.style.transform = "perspective(600px) rotateY(0deg) rotateX(0deg) translateX(0px) translateY(0px) scale(1)";
   });
 </script>
 
