@@ -59,7 +59,11 @@
   .tab.active .tab-content{ opacity:1; pointer-events:auto; transform:translateX(-50%) translateY(0) scale(1); }
 
   .status{ display:flex; gap:8px; align-items:center; font-weight:700; color:var(--status-yellow); font-size:14px; background: linear-gradient(180deg, rgba(255,209,102,0.03), rgba(255,209,102,0.01)); border-radius:12px; padding:6px 10px; border:1px solid rgba(255,209,102,0.08); pointer-events:auto; }
-  .status-dot{ width:10px; height:10px; border-radius:50%; background:var(--status-yellow); box-shadow:0 0 8px rgba(255,209,102,0.45); }
+  .status-dot{ width:10px; height:10px; border-radius:50%; background:var(--status-yellow); box-shadow:0 0 8px rgba(255,209,102,0.45); transition: opacity 0.15s ease; }
+  .status-dot.flicker{ animation: flickerBlink 1s ease; }
+  @keyframes flickerBlink{
+    0%,100%{opacity:1;} 25%,75%{opacity:0.2;}
+  }
 
   /* stage & card */
   .stage{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; z-index:var(--ui-z); pointer-events:none; }
@@ -78,15 +82,13 @@
 
   .center-card.hover-glow{ box-shadow: 0 30px 70px rgba(255,136,0,0.12); }
 
-  /* cursor glow + spotlight */
   .cursor-glow{ position:fixed; left:0; top:0; width:120px; height:120px; border-radius:50%; pointer-events:none; transform:translate3d(-9999px,-9999px,0); z-index:4; background: radial-gradient(circle, rgba(255,140,0,0.28) 0%, rgba(255,140,0,0.12) 20%, rgba(0,180,255,0.06) 40%, rgba(0,0,0,0) 70%); filter: blur(20px); mix-blend-mode: screen; transition:opacity .12s linear, width .12s ease, height .12s ease; }
   .spotlight{ position:fixed; left:0; top:0; width:520px; height:520px; pointer-events:none; transform: translate3d(-9999px,-9999px,0); z-index:2; mix-blend-mode: screen; filter: blur(36px); background: radial-gradient(circle at center, rgba(80,200,255,0.10) 0%, rgba(40,160,220,0.06) 25%, rgba(0,0,0,0) 60%); transition: opacity .12s linear; }
 
-  /* bottom messages */
   .bottom-msg{ position:fixed; left:50%; transform:translateX(-50%); bottom:24px; z-index:999; background: rgba(0,0,0,0.45); color:#dff8ff; padding:8px 14px; border-radius:12px; font-size:13px; backdrop-filter: blur(8px); box-shadow: 0 8px 24px rgba(0,0,0,0.45); opacity:0; pointer-events:none; transition:opacity .18s ease, transform .18s ease; }
   .bottom-msg.show{ opacity:1; transform:translateX(-50%) translateY(0); }
 
-  /* 67 popup (positioned absolute via JS under name) */
+  /* 67 popup (kept but we're using bottom-msg now) */
   .badge-67{ position:fixed; font-size:16px; color:rgba(255,255,255,0.95); background: rgba(0,0,0,0.5); padding:6px 10px; border-radius:10px; opacity:0; transform: translateY(-6px) scale(.95); transition: opacity .12s ease, transform .22s cubic-bezier(.2,.9,.2,1); pointer-events:none; z-index:9999; }
 
   /* confetti canvas */
@@ -156,7 +158,7 @@
 <!-- bottom message -->
 <div class="bottom-msg" id="bottomMsg"></div>
 
-<!-- 67 badge -->
+<!-- 67 badge (unused now but kept) -->
 <div class="badge-67" id="badge67">67</div>
 
 <script>
@@ -269,7 +271,7 @@ cardZone.addEventListener('mouseleave', onZoneLeave);
   requestAnimationFrame(animateCard);
 })();
 
-/* Confetti from logo — single active instance, duration 4s */
+/* Confetti from logo — single active instance, duration 3s */
 confettiCanvas.width = innerWidth; confettiCanvas.height = innerHeight;
 window.addEventListener('resize', ()=> { confettiCanvas.width = innerWidth; confettiCanvas.height = innerHeight; });
 
@@ -313,7 +315,7 @@ function runConfetti(sx, sy, onDone){
       ctx.fillRect(-p.r/2, -p.r/2, p.r, p.r*0.6);
       ctx.restore();
     }
-    if(t < 3000) requestAnimationFrame(frame);
+    if(t < 3000) requestAnimationFrame(frame); // <-- 3 seconds now
     else { ctx.clearRect(0,0,confettiCanvas.width, confettiCanvas.height); onDone(); }
   }
   requestAnimationFrame(frame);
@@ -326,22 +328,30 @@ statusBox.addEventListener('click', ()=> {
   setTimeout(()=> statusDot.classList.remove('flicker'), 1000);
 });
 
-/* "67" popup after 5 clicks on name (below name) */
+/* "67" popup after 5 clicks on name (now uses bottom message zone) */
 let nameClicks = 0;
 let nameTimer = null;
+let bottomMsgTimer = null;
+function showBottomMessage(msg, duration=2000){
+  // if another message is visible, remove it first
+  bottomMsg.classList.remove('show');
+  clearTimeout(bottomMsgTimer);
+  // small delay to ensure CSS visual reset then show
+  setTimeout(()=>{
+    bottomMsg.textContent = msg;
+    bottomMsg.classList.add('show');
+    bottomMsgTimer = setTimeout(()=> bottomMsg.classList.remove('show'), duration);
+  }, 40);
+}
+
 nameBtn.addEventListener('click', (e)=>{
   nameClicks++;
   if(nameTimer) clearTimeout(nameTimer);
   nameTimer = setTimeout(()=> nameClicks = 0, 1200);
   if(nameClicks >= 5){
     nameClicks = 0;
-    // position badge67 under the name element
-    const r = nameBtn.getBoundingClientRect();
-    badge67.style.left = (r.left + r.width/2 - badge67.offsetWidth/2) + 'px';
-    badge67.style.top = (r.bottom + 8) + 'px';
-    badge67.style.opacity = '1';
-    badge67.style.transform = 'translateY(0) scale(1)';
-    setTimeout(()=> { badge67.style.opacity = '0'; badge67.style.transform = 'translateY(8px) scale(.98)'; }, 2000);
+    // show "67" at bottom (replace any existing bottom message)
+    showBottomMessage("67", 2000);
   }
 });
 
@@ -355,9 +365,8 @@ document.addEventListener('click', (e)=>{
   bgTimer = setTimeout(()=> bgClicks = 0, 700);
   if(bgClicks >= 3){
     bgClicks = 0;
-    bottomMsg.textContent = "stop clicking the void";
-    bottomMsg.classList.add('show');
-    setTimeout(()=> bottomMsg.classList.remove('show'), 2000);
+    // show bottom message and replace any existing
+    showBottomMessage("stop clicking the void", 2000);
   }
 });
 
