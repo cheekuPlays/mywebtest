@@ -1,262 +1,183 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Cheeku — Under Development</title>
+<title>Cheeku fun — Under Development</title>
 
-<!-- Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
   :root{
-    --bg-1: #0f1116;
-    --bg-2: #0b0d12;
+    --bg1:#081018;
+    --bg2:#0f1720;
     --glass-bg: rgba(255,255,255,0.06);
-    --glass-border: rgba(255,255,255,0.16);
+    --glass-border: rgba(255,255,255,0.12);
     --accent: #ff8800;
-    --accent-weak: rgba(255,136,0,0.18);
+    --accent-weak: rgba(255,136,0,0.12);
     --panel-text: #eafcff;
-    --muted: rgba(234,252,255,0.7);
+    --muted: rgba(234,252,255,0.75);
     --status-yellow: #ffd166;
+    --ui-z: 100;
   }
 
   *{box-sizing:border-box}
-  html,body{height:100%}
+  html,body{height:100%; margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;}
   body{
-    margin:0;
-    height:100%;
-    background: radial-gradient(1200px 600px at 20% 20%, #14202b 0%, transparent 25%),
-                radial-gradient(900px 400px at 80% 80%, #101226 0%, transparent 20%),
-                linear-gradient(180deg,var(--bg-1),var(--bg-2));
-    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-    color: white;
+    background:
+      radial-gradient(900px 500px at 15% 20%, rgba(8,24,40,0.8), transparent 15%),
+      radial-gradient(700px 400px at 85% 80%, rgba(15,22,32,0.7), transparent 12%),
+      linear-gradient(180deg,var(--bg1),var(--bg2));
+    color:#fff;
     overflow:hidden;
     -webkit-font-smoothing:antialiased;
     -moz-osx-font-smoothing:grayscale;
   }
 
-  /* Topbar layout: left logo, center nav, right status */
+  /* Topbar layout */
   .topbar {
-    position: fixed;
-    top: 18px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: min(1200px, calc(100% - 40px));
+    position:fixed;
+    top:16px;
+    left:50%;
+    transform:translateX(-50%);
+    width:min(1200px, calc(100% - 40px));
     display:flex;
     align-items:center;
     justify-content:space-between;
     gap:16px;
-    z-index: 30;
-    pointer-events: none; /* allow inner items to opt-in for pointer-events */
+    z-index:var(--ui-z);
+    pointer-events:none;
   }
+  .corner{display:flex; align-items:center; gap:12px; pointer-events:auto;}
 
-  .corner {
-    display:flex;
-    align-items:center;
-    gap:12px;
-    pointer-events: auto;
-  }
-
-  /* CHEEKU playful logo on left */
-  .logo {
-    font-family: "Baloo 2", "Inter", sans-serif;
+  /* Logo */
+  .logo{
+    font-family:"Baloo 2", Inter, sans-serif;
     font-weight:600;
     font-size:20px;
-    color: #ffffff;
-    text-shadow: 0 6px 18px rgba(255,136,0,0.06);
+    color:#fff;
     padding:6px 12px;
     border-radius:999px;
     background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.00));
-    border: 1px solid rgba(255,255,255,0.04);
+    border:1px solid rgba(255,255,255,0.04);
     backdrop-filter: blur(8px);
-    box-shadow: 0 6px 18px rgba(255,136,0,0.035) inset;
+    box-shadow: 0 6px 18px rgba(255,136,0,0.03) inset;
   }
-  .logo .chip {
+  .logo .chip{
     display:inline-block;
-    margin-left:6px;
+    margin-left:8px;
     padding:3px 8px;
     font-size:12px;
+    border-radius:999px;
+    color:var(--accent);
     background: linear-gradient(90deg, rgba(255,136,0,0.07), rgba(255,255,255,0.01));
-    border-radius:12px;
-    color: var(--accent);
     font-weight:600;
-    box-shadow: 0 4px 12px rgba(255,136,0,0.04);
   }
 
-  /* Center nav */
-  .navbar {
-    display:flex;
-    gap:20px;
-    align-items:center;
-    justify-content:center;
-    pointer-events: auto;
-  }
-
-  .tab {
-    position: relative;
-    padding:10px 18px;
+  /* Nav center */
+  .navbar{ display:flex; gap:18px; align-items:center; justify-content:center; pointer-events:auto; }
+  .tab{
+    position:relative;
+    padding:10px 16px;
     border-radius:12px;
     background: var(--glass-bg);
     border:1px solid var(--glass-border);
-    backdrop-filter: blur(10px);
-    cursor:pointer;
+    backdrop-filter: blur(10px) saturate(120%);
+    color: #aee7ff;
     font-weight:600;
-    color: var(--muted);
+    cursor:pointer;
     transition: transform .18s ease, background .18s ease, color .18s ease;
     user-select:none;
   }
-  .tab:hover{ transform: translateY(-3px); color: white; background: rgba(255,255,255,0.09) }
+  .tab:hover{ transform:translateY(-3px); color:#fff; background: rgba(255,255,255,0.08); }
 
-  /* Glass dropdown panels */
-  .tab-content {
+  /* Dropdown glass (improved) */
+  .tab-content{
     position:absolute;
-    top: 54px;
+    top:56px;
     left:50%;
-    transform: translateX(-50%) translateY(-8px) scale(.98);
-    width: 300px;
+    transform:translateX(-50%) translateY(-8px) scale(.98);
+    width:320px;
     padding:14px;
-    border-radius:12px;
+    border-radius:14px;
     background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
     border: 1px solid rgba(255,255,255,0.08);
-    backdrop-filter: blur(14px) saturate(120%);
-    box-shadow: 0 10px 30px rgba(2,6,23,0.45);
+    backdrop-filter: blur(20px) saturate(120%);
+    box-shadow: 0 12px 36px rgba(2,6,23,0.6);
     opacity:0;
     pointer-events:none;
-    transform-origin: top center;
+    transform-origin:top center;
     transition: all .24s cubic-bezier(.2,.9,.2,1);
-    color: var(--panel-text);
+    color:var(--panel-text);
     text-align:center;
-    z-index:40;
+    z-index: calc(var(--ui-z) + 10);
   }
-
   .tab.active .tab-content{
     opacity:1;
     pointer-events:auto;
-    transform: translateX(-50%) translateY(0) scale(1);
+    transform:translateX(-50%) translateY(0) scale(1);
+  }
+  .tab-content p{ margin:0; font-size:.95rem; line-height:1.35; color:var(--panel-text) }
+
+  /* Status right */
+  .status{
+    display:flex; gap:8px; align-items:center; font-weight:600; color:var(--status-yellow);
+    font-size:14px; background: linear-gradient(180deg, rgba(255,209,102,0.03), rgba(255,209,102,0.01));
+    border-radius:12px; padding:6px 10px; border:1px solid rgba(255,209,102,0.08); backdrop-filter:blur(8px);
+  }
+  .status-dot{ width:10px; height:10px; border-radius:50%; background:var(--status-yellow); box-shadow:0 0 8px rgba(255,209,102,0.45); animation:blink 1.2s infinite; }
+  @keyframes blink{ 0%{opacity:1; transform:scale(1)} 50%{opacity:.2; transform:scale(.85)} 100%{opacity:1; transform:scale(1)} }
+
+  /* Stage / orbs / card layout */
+  .stage{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; z-index:var(--ui-z); pointer-events:none; }
+
+  .orb { position:absolute; border-radius:50%; filter: blur(30px) saturate(120%); mix-blend-mode: screen; opacity:.8; z-index:2; pointer-events:none; }
+  .orb.o1{ width:360px; height:360px; left:6%; top:8%; background: radial-gradient(circle at 30% 30%, rgba(0,200,255,0.16), rgba(0,200,255,0.05) 40%, rgba(255,0,200,0.02)); animation: drift1 16s ease-in-out infinite; }
+  .orb.o2{ width:420px; height:420px; right:8%; bottom:6%; background: radial-gradient(circle at 60% 60%, rgba(120,80,255,0.12), rgba(120,80,255,0.04) 42%); animation: drift2 18s ease-in-out infinite; animation-delay:3s; }
+  .orb.o3{ width:260px; height:260px; left:28%; bottom:18%; background: radial-gradient(circle at 50% 40%, rgba(0,210,180,0.12), rgba(0,210,180,0.04)); animation: drift3 20s ease-in-out infinite; animation-delay:6s; }
+
+  @keyframes drift1 { 0%{transform:translateY(0) translateX(0)} 50%{transform:translateY(-36px) translateX(18px)} 100%{transform:translateY(0) translateX(0)} }
+  @keyframes drift2 { 0%{transform:translateY(0) translateX(0)} 50%{transform:translateY(40px) translateX(-25px)} 100%{transform:translateY(0) translateX(0)} }
+  @keyframes drift3 { 0%{transform:translateY(0) translateX(0)} 50%{transform:translateY(-28px) translateX(12px)} 100%{transform:translateY(0) translateX(0)} }
+
+  /* center card and invisible proximity zone */
+  .card-zone{
+    position:absolute;
+    width:760px; /* larger interaction zone */
+    height:520px;
+    display:flex; align-items:center; justify-content:center;
+    pointer-events:auto; /* we use it for proximity */
+    z-index: calc(var(--ui-z) - 1); /* below top UI but above background */
   }
 
-  .tab-content p{ margin:0; font-size:0.95rem; line-height:1.35; color:var(--panel-text) }
-
-  /* Right status */
-  .status {
-    display:flex;
-    gap:8px;
-    align-items:center;
-    font-weight:600;
-    color: var(--status-yellow);
-    pointer-events:auto;
-    font-size:14px;
-    background: linear-gradient(180deg, rgba(255,209,102,0.04), rgba(255,209,102,0.01));
-    border-radius:12px;
-    padding:6px 10px;
-    border: 1px solid rgba(255,209,102,0.08);
-    backdrop-filter: blur(8px);
-  }
-
-  .status-dot {
-    width:10px;
-    height:10px;
-    border-radius:50%;
-    background: var(--status-yellow);
-    box-shadow: 0 0 8px rgba(255,209,102,0.45);
-    animation: blink 1.2s infinite;
-  }
-  @keyframes blink{
-    0% { opacity:1; transform: scale(1) }
-    50% { opacity:.2; transform: scale(.85) }
-    100% { opacity:1; transform: scale(1) }
-  }
-
-  /* Main center area */
-  .stage {
-    position: absolute;
-    inset: 0;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    z-index: 10;
-    pointer-events: none;
-  }
-
-  /* Orbs that drift (animated via CSS + slight JS tweak later possible) */
-  .orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(30px) saturate(120%);
-    mix-blend-mode: screen;
-    opacity: .75;
-    z-index: 1;
-    pointer-events: none;
-  }
-  .orb.o1 { width:360px; height:360px; left:6%; top:8%; background: radial-gradient(circle at 30% 30%, rgba(0,200,255,0.18), rgba(0,200,255,0.06) 40%, rgba(255,0,200,0.02)); animation: drift1 16s ease-in-out infinite; }
-  .orb.o2 { width:420px; height:420px; right:8%; bottom:6%; background: radial-gradient(circle at 60% 60%, rgba(120,80,255,0.14), rgba(120,80,255,0.05) 40%); animation: drift2 18s ease-in-out infinite; animation-delay:3s; }
-  .orb.o3 { width:260px; height:260px; left:28%; bottom:18%; background: radial-gradient(circle at 50% 40%, rgba(0,210,180,0.12), rgba(0,210,180,0.04)); animation: drift3 20s ease-in-out infinite; animation-delay:6s; }
-
-  @keyframes drift1 { 0%{transform:translateY(0) translateX(0) } 50%{ transform: translateY(-36px) translateX(18px) } 100%{ transform:translateY(0) translateX(0) } }
-  @keyframes drift2 { 0%{transform:translateY(0) translateX(0) } 50%{ transform: translateY(40px) translateX(-25px) } 100%{ transform:translateY(0) translateX(0) } }
-  @keyframes drift3 { 0%{transform:translateY(0) translateX(0) } 50%{ transform: translateY(-28px) translateX(12px) } 100%{ transform:translateY(0) translateX(0) } }
-
-  /* Center card (glass) */
-  .center-card {
-    width: 520px;
-    height: 320px;
-    border-radius: 22px;
+  .center-card{
+    width:520px; height:320px;
+    border-radius:22px;
     background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
-    border: 1px solid rgba(255,255,255,0.12);
-    backdrop-filter: blur(16px) saturate(120%);
+    border:1px solid rgba(255,255,255,0.12);
+    backdrop-filter: blur(18px) saturate(120%);
     box-shadow: 0 18px 50px rgba(3,6,23,0.6);
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    text-align:center;
-    padding: 28px 30px;
-    pointer-events: auto;
-    z-index: 20;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:28px 30px;
+    pointer-events:auto; z-index:calc(var(--ui-z) + 1);
     transition: box-shadow .18s ease, transform .12s ease;
   }
+  .center-card h2{ margin:0; font-family:"Baloo 2",Inter; font-size:2.1rem; color:var(--accent); text-shadow:0 8px 26px rgba(255,136,0,0.08); letter-spacing:-0.6px; }
+  .center-card p{ margin-top:10px; margin-bottom:18px; font-size:1.05rem; color:var(--panel-text); max-width:86%; line-height:1.35; }
+  .center-card .name{ position:absolute; bottom:16px; font-size:.95rem; color:#ffdcb3; font-weight:600; opacity:.95; }
 
-  .center-card h2 {
-    margin:0;
-    font-family: "Baloo 2", "Inter", sans-serif;
-    font-size: 2.1rem;
-    color: var(--accent);
-    text-shadow: 0 8px 26px rgba(255,136,0,0.08);
-    letter-spacing: -0.6px;
-  }
-  .center-card p {
-    margin-top:10px;
-    margin-bottom: 18px;
-    font-size: 1.05rem;
-    color: var(--panel-text);
-    max-width: 86%;
-    line-height: 1.35;
-  }
-  .center-card .name {
-    position:absolute;
-    bottom:16px;
-    font-size: 0.95rem;
-    color: #ffdcb3;
-    font-weight:600;
-    opacity:0.95;
-  }
+  .center-card.hover-glow{ box-shadow: 0 30px 70px rgba(255,136,0,0.12); }
 
-  /* Subtle glow when hovering */
-  .center-card.hover-glow {
-    box-shadow: 0 30px 70px rgba(255,136,0,0.12);
-  }
+  /* small floating particle layer (subtle) */
+  canvas#bgParticles { position:fixed; inset:0; z-index:1; pointer-events:none; }
 
-  /* responsiveness */
+  /* trail canvas sits above bg particles but under UI */
+  canvas#trail { position:fixed; inset:0; z-index:5; pointer-events:none; }
+
   @media (max-width:760px){
-    .center-card{ width: 92%; height: auto; padding: 26px; }
-    .center-card h2{ font-size:1.6rem }
-    .topbar { top:12px; width: calc(100% - 20px) }
-    .tab-content { width: 260px; left: 50% }
+    .center-card{ width:92%; height:auto; padding:22px 18px; }
+    .card-zone{ width:92%; height:480px; }
+    .topbar{ width: calc(100% - 20px); top:12px; left:50%; transform:translateX(-50%); }
   }
-
-  /* Canvas trail sits above orbs but below UI */
-  canvas#trail { position: fixed; inset:0; z-index:15; pointer-events:none; }
 </style>
 </head>
 <body>
@@ -264,24 +185,18 @@
 <!-- Topbar -->
 <div class="topbar" role="banner">
   <div class="corner" style="justify-content:flex-start;">
-    <div class="logo" aria-hidden="true">CHEEKU<span class="chip">play</span></div>
+    <div class="logo" aria-hidden="true">CHEEKU <span class="chip">fun</span></div>
   </div>
 
-  <nav class="navbar" role="navigation" aria-label="Main navigation">
+  <nav class="navbar" role="navigation" aria-label="Main nav">
     <div class="tab" data-key="gd">Game Development
-      <div class="tab-content">
-        <p>Prototypes, gameplay systems, and in-progress builds — click to see previews and notes.</p>
-      </div>
+      <div class="tab-content"><p>Prototypes, gameplay notes, and in-progress builds — click to preview.</p></div>
     </div>
     <div class="tab" data-key="w3">WEB3
-      <div class="tab-content">
-        <p>Smart contract experiments, token ideas, and UX concepts tying creativity to decentralization.</p>
-      </div>
+      <div class="tab-content"><p>Smart contract experiments, token UX and decentralised ideas in progress.</p></div>
     </div>
     <div class="tab" data-key="ed">Editing
-      <div class="tab-content">
-        <p>Video & content editing workflows, cuts, and process notes — work in progress.</p>
-      </div>
+      <div class="tab-content"><p>Video and content editing workflows, cuts, and visual process notes.</p></div>
     </div>
   </nav>
 
@@ -290,195 +205,285 @@
   </div>
 </div>
 
-<!-- Stage with orbs and center card -->
+<!-- Stage: background orbs, card zone, and card -->
 <div class="stage" aria-hidden="false">
   <div class="orb o1"></div>
   <div class="orb o2"></div>
   <div class="orb o3"></div>
 
-  <div class="center-card" id="card" role="main" aria-label="Cheeku main card">
-    <h2>Welcome to Cheeku's Space</h2>
-    <p>Something new is taking shape.</p>
-    <div class="name">Mithun M Murthy</div>
+  <div class="card-zone" id="cardZone" aria-hidden="false">
+    <div class="center-card" id="card" role="main" aria-label="Cheeku main card">
+      <h2>Welcome to Cheeku's Space</h2>
+      <p>Something new is taking shape.</p>
+      <div class="name">Mithun M Murthy</div>
+    </div>
   </div>
 </div>
 
-<!-- Canvas for trail -->
+<!-- background particles canvas (tiny dots) -->
+<canvas id="bgParticles"></canvas>
+<!-- trail canvas (under UI) -->
 <canvas id="trail"></canvas>
 
 <script>
-/* ----------------------------
-   Smooth curved orange trail
-   ---------------------------- */
+/* =============================
+   Background particles (subtle)
+   ============================= */
+const bgCanvas = document.getElementById('bgParticles');
+const bgCtx = bgCanvas.getContext('2d');
+let bw = bgCanvas.width = innerWidth;
+let bh = bgCanvas.height = innerHeight;
+window.addEventListener('resize', ()=>{ bw = bgCanvas.width = innerWidth; bh = bgCanvas.height = innerHeight; initBgParticles(); });
+
+let bgParticles = [];
+function initBgParticles(){
+  bgParticles = [];
+  const count = Math.max(30, Math.floor((bw*bh)/90000)); // scale with screen
+  for(let i=0;i<count;i++){
+    bgParticles.push({
+      x: Math.random()*bw,
+      y: Math.random()*bh,
+      r: 0.6 + Math.random()*1.6,
+      vx: (Math.random()-0.5) * 0.2,
+      vy: (Math.random()-0.5) * 0.2,
+      alpha: 0.2 + Math.random()*0.6,
+      phase: Math.random()*Math.PI*2
+    });
+  }
+}
+initBgParticles();
+
+function drawBgParticles(t){
+  bgCtx.clearRect(0,0,bw,bh);
+  for(let p of bgParticles){
+    p.x += p.vx + Math.sin((t+p.phase)/4000)*0.1;
+    p.y += p.vy + Math.cos((t+p.phase)/4200)*0.07;
+    if(p.x < -10) p.x = bw + 10;
+    if(p.x > bw+10) p.x = -10;
+    if(p.y < -10) p.y = bh + 10;
+    if(p.y > bh+10) p.y = -10;
+    bgCtx.beginPath();
+    const g = bgCtx.createRadialGradient(p.x,p.y,p.r*0.1,p.x,p.y,p.r*10);
+    g.addColorStop(0, `rgba(200,240,255,${p.alpha*0.45})`);
+    g.addColorStop(1, `rgba(200,240,255,0)`);
+    bgCtx.fillStyle = g;
+    bgCtx.fillRect(p.x - p.r*10, p.y - p.r*10, p.r*20, p.r*20);
+  }
+  requestAnimationFrame(drawBgParticles);
+}
+requestAnimationFrame(drawBgParticles);
+
+/* =============================
+   Smooth particle ripple trail
+   - main requirements:
+   - orange particles with blue aura
+   - fade by time (~1s)
+   - short length
+   - small faint comet tail (A very little)
+   ============================= */
 const canvas = document.getElementById('trail');
 const ctx = canvas.getContext('2d');
 let W = canvas.width = innerWidth;
 let H = canvas.height = innerHeight;
-window.addEventListener('resize', () => {
-  W = canvas.width = innerWidth;
-  H = canvas.height = innerHeight;
-});
+window.addEventListener('resize', ()=>{ W = canvas.width = innerWidth; H = canvas.height = innerHeight; });
 
-/* points queue (shorter) */
-let points = [];
-const MAX_POINTS = 28; // shorter trail
+let particles = [];
+const MAX_PARTICLES = 180; // keep ceiling to avoid perf issues
+const PARTICLE_LIFE = 1000; // ms
 
 document.addEventListener('mousemove', (e) => {
-  points.push({ x: e.clientX, y: e.clientY, t: performance.now() });
-  if (points.length > MAX_POINTS) points.shift();
+  // spawn a few particles per move for nice ripple
+  for(let i=0;i<2;i++){
+    const angle = (Math.random() * Math.PI*2);
+    const speed = 0.2 + Math.random() * 0.9;
+    particles.push({
+      x: e.clientX + (Math.random()-0.5)*6,
+      y: e.clientY + (Math.random()-0.5)*6,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      born: performance.now(),
+      life: PARTICLE_LIFE,
+      r: 4 + Math.random()*3,
+      hueShift: Math.random()*20 - 10
+    });
+  }
+  // also keep a very faint comet tail control point store (A very little)
+  tailPoint = { x:e.clientX, y:e.clientY, t: performance.now() };
+  if(particles.length > MAX_PARTICLES) particles.splice(0, particles.length - MAX_PARTICLES);
 });
 
-/* draw with quadraticCurveTo for smoothness and glow */
-function drawTrail(){
+/* tail small storage */
+let tailPoint = null;
+let tailHistory = [];
+
+/* draw loop */
+function draw(){
   ctx.clearRect(0,0,W,H);
-  if (points.length < 2) { requestAnimationFrame(drawTrail); return; }
 
-  // draw blurred glow first for halo effect
-  ctx.save();
-  ctx.lineJoin = 'round';
-  ctx.lineCap = 'round';
-  ctx.shadowColor = 'rgba(255,140,0,0.7)';
-  ctx.shadowBlur = 22;
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.beginPath();
-  ctx.lineWidth = 18;
-  ctx.strokeStyle = 'rgba(255,140,0,0.09)';
-  ctx.moveTo(points[0].x, points[0].y);
-  for (let i=1;i<points.length-1;i++){
-    const cx = (points[i].x + points[i+1].x)/2;
-    const cy = (points[i].y + points[i+1].y)/2;
-    ctx.quadraticCurveTo(points[i].x, points[i].y, cx, cy);
+  const now = performance.now();
+  // draw faint comet tail (very subtle little line)
+  if(tailPoint){
+    tailHistory.push({ x: tailPoint.x, y: tailPoint.y, t: tailPoint.t });
+    if(tailHistory.length > 8) tailHistory.shift();
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    for(let i=0;i<tailHistory.length-1;i++){
+      const a = tailHistory[i], b = tailHistory[i+1];
+      const alpha = (i+1)/tailHistory.length * 0.08;
+      ctx.strokeStyle = `rgba(255,140,0,${alpha})`;
+      ctx.lineWidth = 2 + i*0.4;
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      ctx.stroke();
+    }
+    ctx.restore();
   }
-  ctx.stroke();
-  ctx.restore();
 
-  // main solid stroke
-  ctx.save();
-  ctx.lineJoin = 'round';
-  ctx.lineCap = 'round';
-  ctx.beginPath();
-  ctx.lineWidth = 8;
-  ctx.strokeStyle = 'rgba(255,140,0,0.95)';
-  ctx.moveTo(points[0].x, points[0].y);
-  for (let i=1;i<points.length-1;i++){
-    const cx = (points[i].x + points[i+1].x)/2;
-    const cy = (points[i].y + points[i+1].y)/2;
-    ctx.quadraticCurveTo(points[i].x, points[i].y, cx, cy);
+  // draw particles with glow (blue aura under, orange center)
+  for(let i=particles.length-1; i>=0; i--){
+    const p = particles[i];
+    const age = now - p.born;
+    const t = Math.max(0, Math.min(1, age / p.life)); // 0..1
+    if(age > p.life){
+      particles.splice(i,1);
+      continue;
+    }
+
+    // position integrate
+    p.x += p.vx;
+    p.y += p.vy;
+    // slight damping
+    p.vx *= 0.995;
+    p.vy *= 0.995;
+
+    // size/alpha easing (fade out towards end)
+    const alpha = (1 - t) * 0.95;
+    const r = p.r * (1 - t*0.6);
+
+    // draw aura (blue halo) underneath
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.shadowColor = `rgba(0,180,255,${0.45 * alpha})`;
+    ctx.shadowBlur = 22 * (1 - t*0.3);
+    ctx.fillStyle = `rgba(0,180,255,${0.08 * (1 - t)})`;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, r*2.6, 0, Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+
+    // draw orange core
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.shadowColor = `rgba(255,140,0,${0.6 * alpha})`;
+    ctx.shadowBlur = 14 * (1 - t*0.2);
+    ctx.fillStyle = `rgba(255,140,0,${0.95 * (1 - t)})`;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, r, 0, Math.PI*2);
+    ctx.fill();
+    ctx.restore();
   }
-  ctx.stroke();
-  ctx.restore();
 
-  // fade older points slightly (not necessary to mutate alpha here; we keep short list)
-  requestAnimationFrame(drawTrail);
+  requestAnimationFrame(draw);
 }
-drawTrail();
+draw();
 
-/* ----------------------------
-   Glass dropdown interactions
-   ---------------------------- */
+/* =============================
+   Tabs behavior (glass style already in CSS)
+   ============================= */
 const tabs = document.querySelectorAll('.tab');
-tabs.forEach(tab => {
-  tab.addEventListener('click', (ev) => {
-    // toggle active, close others
+tabs.forEach(tab=>{
+  tab.addEventListener('click', (ev)=>{
     const active = tab.classList.contains('active');
-    tabs.forEach(t => t.classList.remove('active'));
-    if (!active) tab.classList.add('active');
+    tabs.forEach(t=>t.classList.remove('active'));
+    if(!active) tab.classList.add('active');
   });
 });
-
-/* close dropdowns when clicking outside */
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('.tab')){
-    tabs.forEach(t => t.classList.remove('active'));
-  }
+document.addEventListener('click', (e)=>{
+  if(!e.target.closest('.tab')) tabs.forEach(t=>t.classList.remove('active'));
 });
+document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') tabs.forEach(t=>t.classList.remove('active')); });
 
-/* ----------------------------
-   Enhanced interactive center card
-   - non-linear sensitivity so center moves too
-   - smooth interpolation (lerp) for fluidity
-   ---------------------------- */
+/* =============================
+   Proximity-based card interaction
+   - invisible cardZone detects movement/position
+   - card uses non-linear sensitivity and lerp for smoothness
+   ============================= */
+const cardZone = document.getElementById('cardZone');
 const card = document.getElementById('card');
-let mouse = { x: 0, y: 0 };
-let cardState = { rx: 0, ry: 0, tx: 0, ty: 0, scale: 1 };
-let animState = { rx: 0, ry: 0, tx: 0, ty: 0, scale: 1 };
 
-card.addEventListener('mousemove', (e) => {
+// state
+let zoneState = { rx:0, ry:0, tx:0, ty:0, scale:1 };
+let anim = { rx:0, ry:0, tx:0, ty:0, scale:1 };
+
+function onZoneMove(e){
+  // compute mouse relative to card center
   const r = card.getBoundingClientRect();
   const cx = r.left + r.width/2;
   const cy = r.top + r.height/2;
-  const offsetX = (e.clientX - cx) / (r.width/2); // -1 .. 1
-  const offsetY = (e.clientY - cy) / (r.height/2); // -1 .. 1
+  const dx = (e.clientX - cx) / (r.width/2); // -1..1
+  const dy = (e.clientY - cy) / (r.height/2); // -1..1
 
-  // Non-linear sensitivity: cubic easing so small inputs still produce motion
-  const sX = Math.sign(offsetX) * Math.pow(Math.abs(offsetX), 1.6);
-  const sY = Math.sign(offsetY) * Math.pow(Math.abs(offsetY), 1.6);
+  // non-linear sensitivity to make center react strongly too
+  const sx = Math.sign(dx) * Math.pow(Math.abs(dx), 1.6);
+  const sy = Math.sign(dy) * Math.pow(Math.abs(dy), 1.6);
 
-  // target rotation and translation
-  cardState.ry = sX * 32;      // rotateY
-  cardState.rx = -sY * 32;     // rotateX (inverted)
-  cardState.tx = sX * 14;      // translateX (depth drift)
-  cardState.ty = sY * 10;      // translateY
-  cardState.scale = 1.035;
+  zoneState.ry = sx * 32;
+  zoneState.rx = -sy * 32;
+  zoneState.tx = sx * 18;
+  zoneState.ty = sy * 12;
+  zoneState.scale = 1.035;
+
   card.classList.add('hover-glow');
-});
-
-card.addEventListener('mouseleave', () => {
-  cardState = { rx:0, ry:0, tx:0, ty:0, scale:1 };
+}
+function onZoneLeave(){
+  zoneState = { rx:0, ry:0, tx:0, ty:0, scale:1 };
   card.classList.remove('hover-glow');
-});
+}
 
-/* smooth lerp helper */
-function lerp(a,b,t){ return a + (b-a) * t; }
+// attach listeners
+cardZone.addEventListener('mousemove', onZoneMove);
+cardZone.addEventListener('mouseleave', onZoneLeave);
 
-/* animate interpolation */
+// smooth interpolation
+function lerp(a,b,t){ return a + (b-a)*t; }
 (function animateCard(){
-  // ease factor (0.12 for smoothness)
   const ease = 0.12;
-  animState.rx = lerp(animState.rx, cardState.rx, ease);
-  animState.ry = lerp(animState.ry, cardState.ry, ease);
-  animState.tx = lerp(animState.tx, cardState.tx, ease);
-  animState.ty = lerp(animState.ty, cardState.ty, ease);
-  animState.scale = lerp(animState.scale, cardState.scale, ease);
+  anim.rx = lerp(anim.rx, zoneState.rx, ease);
+  anim.ry = lerp(anim.ry, zoneState.ry, ease);
+  anim.tx = lerp(anim.tx, zoneState.tx, ease);
+  anim.ty = lerp(anim.ty, zoneState.ty, ease);
+  anim.scale = lerp(anim.scale, zoneState.scale, ease);
 
-  // apply transform
-  card.style.transform = `perspective(900px) translate3d(${animState.tx}px, ${animState.ty}px, 0) rotateX(${animState.rx}deg) rotateY(${animState.ry}deg) scale(${animState.scale})`;
-
+  card.style.transform = `perspective(900px) translate3d(${anim.tx}px, ${anim.ty}px, 0) rotateX(${anim.rx}deg) rotateY(${anim.ry}deg) scale(${anim.scale})`;
   requestAnimationFrame(animateCard);
 })();
 
-/* subtle "pulse" on mouse click */
-card.addEventListener('click', () => {
-  // quick scale burst
-  cardState.scale = 1.07;
-  setTimeout(()=>{ cardState.scale = 1.035; }, 140);
+// clicking the card does a small pulse
+card.addEventListener('click', ()=>{
+  zoneState.scale = 1.07;
+  setTimeout(()=> zoneState.scale = 1.035, 150);
 });
 
-/* ----------------------------
-   small keyboard/UX nicety:
-   - close dropdowns on Esc
-   ---------------------------- */
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') tabs.forEach(t => t.classList.remove('active'));
-});
+/* small UX: clicking outside dropdowns closes them (already handled) */
 
-/* ----------------------------
-   small tweak: make orbs hue-shift slowly by updating filter
-   ---------------------------- */
+/* =============================
+   Slight hue drift for orbs (subtle)
+   ============================= */
 const orbs = document.querySelectorAll('.orb');
 let hue = 0;
-function animateOrbsHue(){
-  hue += 0.08;
-  orbs.forEach((o,i) => {
-    // subtle individual variance
-    const h = (hue + i*30) % 360;
-    o.style.filter = `hue-rotate(${h}deg) blur(30px)`;
-    // occasional slight opacity variation
-    o.style.opacity = 0.68 + Math.sin((performance.now()/2400) + i) * 0.05;
+function animateOrbs(){
+  hue += 0.06;
+  orbs.forEach((o,i)=>{
+    const h = (hue + i*28) % 360;
+    o.style.filter = `hue-rotate(${h}deg) blur(30px) saturate(120%)`;
+    o.style.opacity = 0.6 + Math.sin((performance.now()/2400) + i) * 0.06;
   });
-  requestAnimationFrame(animateOrbsHue);
+  requestAnimationFrame(animateOrbs);
 }
-animateOrbsHue();
+animateOrbs();
 
 </script>
 </body>
