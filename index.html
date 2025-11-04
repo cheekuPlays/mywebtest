@@ -1,192 +1,258 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Cheeku fun</title>
-<style>
-  * {margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;user-select:none;}
-  body {
-    overflow:hidden;
-    height:100vh;width:100vw;
-    background:linear-gradient(120deg,#1e1e2f,#212142,#1b1b2a);
-    background-size:600% 600%;
-    animation:gradientShift 20s ease infinite;
-  }
-  @keyframes gradientShift {
-    0%{background-position:0% 50%;}
-    50%{background-position:100% 50%;}
-    100%{background-position:0% 50%;}
-  }
-  .cursor-glow {
-    position:fixed;top:0;left:0;pointer-events:none;
-    width:200px;height:200px;
-    border-radius:50%;
-    background:radial-gradient(circle,rgba(0,120,255,0.15),transparent 80%);
-    mix-blend-mode:screen;
-    transform:translate(-50%,-50%);
-  }
-  header{
-    position:fixed;top:0;width:100%;
-    display:flex;justify-content:space-between;align-items:center;
-    padding:20px 50px;z-index:5;
-  }
-  .logo{
-    font-size:28px;font-weight:600;color:#fff;cursor:pointer;transition:transform .3s ease;
-  }
-  .logo:active{transform:scale(1.1);}
-  .status{display:flex;align-items:center;gap:10px;color:yellow;font-size:16px;}
-  .dot{
-    width:10px;height:10px;border-radius:50%;background:yellow;
-    animation:blink 1.5s infinite alternate;
-  }
-  @keyframes blink{from{opacity:1;}to{opacity:.4;}}
-  .nav{
-    position:absolute;top:25px;left:50%;transform:translateX(-50%);
-    display:flex;gap:30px;
-  }
-  .nav button{
-    background:rgba(255,255,255,0.1);border:none;
-    backdrop-filter:blur(12px)saturate(160%);
-    color:#fff;padding:10px 20px;border-radius:20px;
-    cursor:pointer;font-size:16px;display:flex;align-items:center;gap:5px;
-    transition:background .3s ease;
-  }
-  .nav button:hover{background:rgba(255,255,255,0.2);}
-  .dropdown{
-    position:absolute;top:60px;
-    left:50%;transform:translateX(-50%);
-    width:300px;padding:20px;
-    background:rgba(255,255,255,0.1);
-    backdrop-filter:blur(12px)saturate(160%);
-    border-radius:20px;
-    color:#fff;text-align:center;
-    opacity:0;pointer-events:none;
-    transition:opacity .3s ease,transform .3s ease;
-  }
-  .dropdown.active{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(10px);}
-  .card{
-    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-    width:350px;height:250px;
-    background:rgba(255,255,255,0.08);
-    backdrop-filter:blur(12px)saturate(160%) brightness(1.1);
-    border-radius:20px;color:white;text-align:center;
-    display:flex;flex-direction:column;justify-content:center;align-items:center;
-    transition:transform .2s ease;
-  }
-  .card h1{font-size:22px;margin-bottom:8px;}
-  .card p{font-size:16px;opacity:.8;}
-  .card span{margin-top:15px;font-size:14px;opacity:.6;cursor:pointer;}
-  .bottom-message{
-    position:fixed;bottom:20px;left:50%;transform:translateX(-50%) scale(0.8);
-    color:white;font-size:14px;opacity:0;
-    transition:opacity .3s ease,transform .3s ease;
-  }
-  .bottom-message.show{opacity:1;transform:translateX(-50%) scale(1);}
-  @keyframes confettiFall{
-    0%{transform:translateY(0) rotate(0deg);opacity:1;}
-    100%{transform:translateY(200px) rotate(360deg);opacity:0;}
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cheeku Fun</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      overflow: hidden;
+      font-family: "Poppins", sans-serif;
+      background: radial-gradient(circle at center, #0a0a0a, #111);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      color: white;
+    }
+
+    /* TOP BAR */
+    .top-bar {
+      position: absolute;
+      top: 20px;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 60px;
+      z-index: 10;
+    }
+
+    .logo {
+      font-size: 1.6em;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+      color: #fff;
+      transition: transform 0.2s ease;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 50px;
+      font-size: 1em;
+      backdrop-filter: blur(12px);
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 10px 30px;
+    }
+
+    .tab {
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .tab:hover {
+      color: #ffae42;
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 1em;
+      color: yellow;
+      cursor: pointer;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      background: yellow;
+      border-radius: 50%;
+      animation: blink 1.5s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* CENTER CARD */
+    .card {
+      text-align: center;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      backdrop-filter: blur(12px);
+      padding: 60px 100px;
+      transition: transform 0.1s ease-out;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      color: #fff;
+    }
+
+    .card h1 {
+      font-size: 2.2em;
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      font-size: 1.1em;
+      opacity: 0.9;
+    }
+
+    .name {
+      margin-top: 20px;
+      font-size: 1em;
+      color: #ffae42;
+      cursor: pointer;
+    }
+
+    /* POPUP MESSAGE */
+    .popup-message {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%) scale(0.8);
+      background: rgba(255, 255, 255, 0.15);
+      padding: 10px 20px;
+      border-radius: 10px;
+      backdrop-filter: blur(8px);
+      color: #fff;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+      font-size: 1em;
+    }
+
+    .popup-message.show {
+      opacity: 1;
+      transform: translateX(-50%) scale(1);
+    }
+  </style>
 </head>
 <body>
-<div class="cursor-glow"></div>
-<header>
-  <div class="logo">Cheeku fun</div>
-  <div class="nav">
-    <button id="gameBtn">🎮 Game Dev ▾</button>
-    <button id="web3Btn">🌐 Web3 ▾</button>
-    <button id="editBtn">✂️ Editing ▾</button>
+  <div class="top-bar">
+    <div class="logo" id="logo">Cheeku fun</div>
+
+    <div class="tabs">
+      <div class="tab">Game Development</div>
+      <div class="tab">WEB3</div>
+      <div class="tab">Editing</div>
+    </div>
+
+    <div class="status" id="status">
+      <div class="dot" id="dot"></div>
+      Under Development
+    </div>
   </div>
-  <div class="status"><div class="dot"></div>Under Development</div>
-</header>
-<div class="dropdown" id="dropdown">This section is under construction...</div>
-<div class="card" id="mainCard">
-  <h1>Welcome to Cheeku's space</h1>
-  <p>Something new is taking shape</p>
-  <span id="mithun">Mithun M Murthy</span>
-</div>
-<div class="bottom-message" id="bottomMsg"></div>
 
-<script>
-const cursorGlow=document.querySelector('.cursor-glow');
-let glowX=0,glowY=0;document.addEventListener('mousemove',e=>{glowX=e.clientX;glowY=e.clientY;});
-function glowLoop(){cursorGlow.style.transform=`translate(${glowX-100}px,${glowY-100}px)`;requestAnimationFrame(glowLoop);}glowLoop();
+  <div class="card" id="card">
+    <h1>Welcome to Cheeku's space</h1>
+    <p>Something new is taking shape</p>
+    <div class="name" id="name">Mithun M Murthy</div>
+  </div>
 
-const buttons=document.querySelectorAll('.nav button');
-const dropdown=document.getElementById('dropdown');
-buttons.forEach(btn=>{btn.addEventListener('click',()=>{dropdown.classList.toggle('active');});});
+  <div class="popup-message" id="popup"></div>
 
-const logo=document.querySelector('.logo');
-let confettiActive=false;
-logo.addEventListener('click',()=>{
-  if(confettiActive)return;
-  confettiActive=true;
-  for(let i=0;i<20;i++){
-    const piece=document.createElement('div');
-    piece.style.position='fixed';
-    piece.style.left=(logo.getBoundingClientRect().left+logo.offsetWidth/2)+'px';
-    piece.style.top=(logo.getBoundingClientRect().top+20)+'px';
-    piece.style.width='6px';piece.style.height='6px';
-    piece.style.background=`hsl(${Math.random()*360},100%,60%)`;
-    piece.style.borderRadius='2px';
-    piece.style.pointerEvents='none';
-    piece.style.zIndex=1000;
-    piece.style.animation=`confettiFall 3s linear forwards`;
-    piece.style.transform=`translate(${(Math.random()-0.5)*200}px,0) rotate(${Math.random()*360}deg)`;
-    document.body.appendChild(piece);
-    setTimeout(()=>piece.remove(),3000);
-  }
-  setTimeout(()=>confettiActive=false,3000);
-});
+  <canvas id="confettiCanvas"></canvas>
 
-const card=document.getElementById('mainCard');
-let centerX=window.innerWidth/2,centerY=window.innerHeight/2;
-document.addEventListener('mousemove',e=>{
-  const dx=(e.clientX-centerX)/centerX;
-  const dy=(e.clientY-centerY)/centerY;
-  const rotateX=dy*10,rotateY=-dx*10;
-  card.style.transform=`translate(-50%,-50%) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-});
-document.addEventListener('mouseleave',()=>{card.style.transform='translate(-50%,-50%)';});
+  <script>
+    /* Confetti */
+    const logo = document.getElementById("logo");
+    const confettiCanvas = document.getElementById("confettiCanvas");
+    const ctx = confettiCanvas.getContext("2d");
+    let confetti = [];
 
-const status=document.querySelector('.status');
-status.addEventListener('click',()=>{
-  const dot=document.querySelector('.dot');
-  dot.style.animation='none';
-  dot.offsetHeight; // reflow
-  dot.style.animation='blink 0.2s infinite alternate';
-  setTimeout(()=>dot.style.animation='blink 1.5s infinite alternate',1000);
-});
-
-const bottomMsg=document.getElementById('bottomMsg');
-let msgTimeout;
-function showBottomMessage(text){
-  if(msgTimeout)clearTimeout(msgTimeout);
-  bottomMsg.textContent=text;
-  bottomMsg.classList.add('show');
-  msgTimeout=setTimeout(()=>bottomMsg.classList.remove('show'),2000);
-}
-let bgClickCount=0;
-document.body.addEventListener('click',e=>{
-  if(e.target===document.body){
-    bgClickCount++;
-    if(bgClickCount>=3){
-      showBottomMessage('stop clicking the void');
-      bgClickCount=0;
+    function resizeCanvas() {
+      confettiCanvas.width = window.innerWidth;
+      confettiCanvas.height = window.innerHeight;
     }
-  }
-});
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
 
-const mithun=document.getElementById('mithun');
-let mithunCount=0;
-mithun.addEventListener('click',()=>{
-  mithunCount++;
-  if(mithunCount>=5){
-    showBottomMessage('67');
-    mithunCount=0;
-  }
-});
-</script>
+    logo.addEventListener("click", () => {
+      if (confetti.length) return;
+      for (let i = 0; i < 100; i++) {
+        confetti.push({
+          x: window.innerWidth / 10 + Math.random() * 100,
+          y: 50,
+          r: Math.random() * 6 + 2,
+          dx: Math.random() * 4 - 2,
+          dy: Math.random() * 4 + 2,
+          color: `hsl(${Math.random() * 360}, 100%, 50%)`
+        });
+      }
+      setTimeout(() => confetti = [], 3000); // lasts 3s
+    });
+
+    function drawConfetti() {
+      ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+      confetti.forEach(c => {
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
+        ctx.fillStyle = c.color;
+        ctx.fill();
+        c.x += c.dx;
+        c.y += c.dy;
+      });
+      requestAnimationFrame(drawConfetti);
+    }
+    drawConfetti();
+
+    /* Under Development flicker */
+    const status = document.getElementById("status");
+    const dot = document.getElementById("dot");
+
+    status.addEventListener("click", () => {
+      dot.style.transition = "opacity 0.1s";
+      dot.style.opacity = "0";
+      setTimeout(() => {
+        dot.style.opacity = "1";
+      }, 100);
+    });
+
+    /* Popup for 67 & stop clicking the void */
+    const popup = document.getElementById("popup");
+    let popupTimeout;
+    function showPopup(text) {
+      popup.textContent = text;
+      popup.classList.add("show");
+      clearTimeout(popupTimeout);
+      popupTimeout = setTimeout(() => {
+        popup.classList.remove("show");
+      }, 2000);
+    }
+
+    /* Name click for 67 after 5 clicks */
+    const nameEl = document.getElementById("name");
+    let nameClickCount = 0;
+    nameEl.addEventListener("click", () => {
+      nameClickCount++;
+      if (nameClickCount >= 5) {
+        showPopup("67");
+        nameClickCount = 0;
+      }
+    });
+
+    /* Background click for stop clicking the void */
+    let bgClickCount = 0;
+    document.body.addEventListener("click", e => {
+      if (
+        e.target.id !== "logo" &&
+        e.target.id !== "status" &&
+        e.target.className !== "tab" &&
+        e.target.id !== "name"
+      ) {
+        bgClickCount++;
+        if (bgClickCount >= 3) {
+          showPopup("stop clicking the void");
+          bgClickCount = 0;
+        }
+      }
+    });
+  </script>
 </body>
 </html>
