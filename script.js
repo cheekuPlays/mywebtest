@@ -13,6 +13,10 @@ const tabs = $$('.tab');
 const statusDot = $('#statusDot');
 const statusBox = $('#statusToggle');
 const bottomMsg = $('#bottomMsg');
+const card = $('#card');
+const cardShadow = $('#cardShadow');
+const nameBtn = $('#nameBtn');
+const scrollDownBtn = $('#scrollDownBtn');
 
 /* Loading intro */
 window.addEventListener('load', () => {
@@ -143,9 +147,91 @@ function showBottomMessage(msg, duration = 2000) {
 
 statusBox.addEventListener('click', () => {
     statusDot.classList.add('flicker');
-    showBottomMessage('Currently building cool stuff', 2000);
+    showBottomMessage('Have patience', 2000);
     setTimeout(() => statusDot.classList.remove('flicker'), 1000);
 });
+
+/* 67 Easter Egg */
+let nameClicks = 0;
+let nameTimer = null;
+nameBtn.addEventListener('click', () => {
+    nameClicks++;
+    if (nameTimer) clearTimeout(nameTimer);
+    nameTimer = setTimeout(() => nameClicks = 0, 1200);
+    if (nameClicks >= 5) {
+        nameClicks = 0;
+        showBottomMessage("67", 2000);
+    }
+});
+
+/* Scroll Indicator Click */
+scrollDownBtn.addEventListener('click', () => {
+    const nextSection = $('#gamedev');
+    if (nextSection) nextSection.scrollIntoView({ behavior: 'smooth' });
+});
+
+/* Card Tilt Effect (Restored) */
+const cardZone = $('.hero-section'); // Use hero section as the zone
+let zoneState = { rx: 0, ry: 0, tx: 0, ty: 0, scale: 1 };
+let anim = { rx: 0, ry: 0, tx: 0, ty: 0, scale: 1 };
+const maxTilt = 12;
+
+function onZoneMove(e) {
+    // Calculate relative to the card's center
+    if (!card) return;
+    const r = card.getBoundingClientRect();
+    const cx = r.left + r.width / 2;
+    const cy = r.top + r.height / 2;
+
+    // Only apply if mouse is somewhat near the card or in the hero section
+    // To avoid jumping when scrolling down and mouse is far away
+    if (Math.abs(e.clientY - cy) > 500) return;
+
+    const dx = (e.clientX - cx) / (r.width / 2);
+    const dy = (e.clientY - cy) / (r.height / 2);
+
+    // Dampen the effect slightly
+    const sx = Math.sign(dx) * Math.pow(Math.abs(dx), 1.2);
+    const sy = Math.sign(dy) * Math.pow(Math.abs(dy), 1.2);
+
+    zoneState.ry = Math.max(-maxTilt, Math.min(maxTilt, sx * maxTilt));
+    zoneState.rx = Math.max(-maxTilt, Math.min(maxTilt, -sy * maxTilt));
+    zoneState.tx = sx * 8;
+    zoneState.ty = sy * 6;
+    zoneState.scale = 1.02;
+
+    // Shadow movement
+    if (cardShadow) {
+        cardShadow.style.transform = `translate3d(${-sx * 18}px, ${-sy * 10}px, 0)`;
+    }
+}
+
+function onZoneLeave() {
+    zoneState = { rx: 0, ry: 0, tx: 0, ty: 0, scale: 1 };
+    if (cardShadow) cardShadow.style.transform = `translate3d(0,0,0)`;
+}
+
+// Attach listeners to hero section for the tilt effect
+if (cardZone) {
+    cardZone.addEventListener('mousemove', onZoneMove);
+    cardZone.addEventListener('mouseleave', onZoneLeave);
+}
+
+// Animation loop for card
+(function animateCard() {
+    const easeCard = 0.12;
+    anim.rx = lerp(anim.rx, zoneState.rx, easeCard);
+    anim.ry = lerp(anim.ry, zoneState.ry, easeCard);
+    anim.tx = lerp(anim.tx, zoneState.tx, easeCard);
+    anim.ty = lerp(anim.ty, zoneState.ty, easeCard);
+    anim.scale = lerp(anim.scale, zoneState.scale, easeCard);
+
+    if (card) {
+        card.style.transform = `perspective(900px) translate3d(${anim.tx}px, ${anim.ty}px, 0) rotateX(${anim.rx}deg) rotateY(${anim.ry}deg) scale(${anim.scale})`;
+    }
+    requestAnimationFrame(animateCard);
+})();
+
 
 /* small UX: cursor glow size on mousedown */
 window.addEventListener('mousedown', () => { cursorGlow.style.width = '160px'; cursorGlow.style.height = '160px'; });

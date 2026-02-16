@@ -1,160 +1,168 @@
 <!doctype html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Cheeku - Portfolio</title>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Cheeku - Portfolio</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Inter:wght@300;400;600;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body class="loading">
 
-<!-- spotlight -->
-<div class="spotlight" id="spotlight"></div>
-<div class="cursor-glow" id="cursorGlow"></div>
+  <!-- spotlight -->
+  <div class="spotlight" id="spotlight"></div>
+  <div class="cursor-glow" id="cursorGlow"></div>
 
-<!-- topbar -->
-<nav class="topbar">
-  <div class="topbar-inner">
-    <div class="left">
-      <div class="logo" id="logoBtn">CHEEKU <span class="chip">dev</span></div>
-    </div>
+  <!-- topbar -->
+  <nav class="topbar">
+    <div class="topbar-inner">
+      <div class="left">
+        <div class="logo" id="logoBtn">CHEEKU <span class="chip">dev</span></div>
+      </div>
 
-    <div class="center" aria-label="Main nav">
-      <a href="#hero" class="tab active-link" data-target="hero">Home</a>
-      <a href="#gamedev" class="tab" data-target="gamedev">Game Dev</a>
-      <a href="#web3" class="tab" data-target="web3">WEB3</a>
-      <a href="#editing" class="tab" data-target="editing">Editing</a>
-    </div>
+      <div class="center" aria-label="Main nav">
+        <a href="#hero" class="tab active-link" data-target="hero">Home</a>
+        <a href="#gamedev" class="tab" data-target="gamedev">Game Dev</a>
+        <a href="#web3" class="tab" data-target="web3">WEB3</a>
+        <a href="#editing" class="tab" data-target="editing">Editing</a>
+      </div>
 
-    <div class="right">
-      <div class="status" id="statusToggle"><div class="status-dot" id="statusDot"></div><div>Open for Work</div></div>
-    </div>
-  </div>
-</nav>
-
-<main>
-  <!-- Hero Section -->
-  <section id="hero" class="hero-section">
-    <div class="hero-content reveal">
-      <div class="card-shadow"></div>
-      <div class="center-card mirror-card">
-        <h1>Welcome to Cheeku's Space</h1>
-        <p>Crafting immersive digital experiences through code, design, and motion.</p>
-        <div class="name">Mithun M Murthy</div>
-        <div class="scroll-indicator">
-          <span>Scroll to explore</span>
-          <div class="arrow-down">↓</div>
+      <div class="right">
+        <div class="status" id="statusToggle">
+          <div class="status-dot" id="statusDot"></div>
+          <div>Building the Future</div>
         </div>
       </div>
     </div>
-  </section>
+  </nav>
 
-  <!-- Game Development Section -->
-  <section id="gamedev" class="content-section">
-    <div class="section-header reveal">
-      <h2>Game Development</h2>
-      <p>Building worlds, mechanics, and interactive stories.</p>
-    </div>
-    <div class="grid-container">
-      <div class="project-card reveal delay-100">
-        <div class="card-image placeholder-gradient-1"></div>
-        <div class="card-info">
-          <h3>Neon Racer</h3>
-          <p>High-speed cyberpunk racing visual prototype made in Unity.</p>
-          <div class="tags"><span class="tag">Unity</span><span class="tag">C#</span></div>
+  <main>
+    <!-- Hero Section -->
+    <section id="hero" class="hero-section">
+      <div class="hero-content reveal">
+        <div class="card-shadow" id="cardShadow"></div>
+        <div class="center-card mirror-card" id="card">
+          <h1>Welcome to Cheeku's Space</h1>
+          <p>Crafting immersive digital experiences through code, design, and motion.</p>
+          <div class="name" id="nameBtn">Mithun M Murthy</div>
+          <div class="scroll-indicator" id="scrollDownBtn">
+            <span>Scroll to explore</span>
+            <div class="arrow-down">↓</div>
+          </div>
         </div>
       </div>
-      <div class="project-card reveal delay-200">
-        <div class="card-image placeholder-gradient-2"></div>
-        <div class="card-info">
-          <h3>Void Walker</h3>
-          <p>Atmospheric platformer with gravity-shifting mechanics.</p>
-          <div class="tags"><span class="tag">Godot</span><span class="tag">GDScript</span></div>
-        </div>
-      </div>
-      <div class="project-card reveal delay-300">
-        <div class="card-image placeholder-gradient-3"></div>
-        <div class="card-info">
-          <h3>Pixel Tactics</h3>
-          <p>Turn-based strategy game engine experiment.</p>
-          <div class="tags"><span class="tag">C++</span><span class="tag">SDL2</span></div>
-        </div>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- WEB3 Section -->
-  <section id="web3" class="content-section">
-    <div class="section-header reveal">
-      <h2>WEB3 Experiments</h2>
-      <p>Decentralized applications and smart contract interfaces.</p>
-    </div>
-    <div class="grid-container">
-      <div class="project-card reveal delay-100">
-        <div class="card-image placeholder-gradient-4"></div>
-        <div class="card-info">
-          <h3>Token Swap UI</h3>
-          <p>Clean, intuitive interface for decentralized exchanges.</p>
-          <div class="tags"><span class="tag">React</span><span class="tag">Ethers.js</span></div>
+    <!-- Game Development Section -->
+    <section id="gamedev" class="content-section">
+      <div class="section-header reveal">
+        <h2>Game Development</h2>
+        <p>Building worlds, mechanics, and interactive stories.</p>
+      </div>
+      <div class="grid-container">
+        <div class="project-card reveal delay-100">
+          <div class="card-image placeholder-gradient-1"></div>
+          <div class="card-info">
+            <h3>Neon Racer</h3>
+            <p>High-speed cyberpunk racing visual prototype made in Unity.</p>
+            <div class="tags"><span class="tag">Unity</span><span class="tag">C#</span></div>
+          </div>
+        </div>
+        <div class="project-card reveal delay-200">
+          <div class="card-image placeholder-gradient-2"></div>
+          <div class="card-info">
+            <h3>Void Walker</h3>
+            <p>Atmospheric platformer with gravity-shifting mechanics.</p>
+            <div class="tags"><span class="tag">Godot</span><span class="tag">GDScript</span></div>
+          </div>
+        </div>
+        <div class="project-card reveal delay-300">
+          <div class="card-image placeholder-gradient-3"></div>
+          <div class="card-info">
+            <h3>Pixel Tactics</h3>
+            <p>Turn-based strategy game engine experiment.</p>
+            <div class="tags"><span class="tag">C++</span><span class="tag">SDL2</span></div>
+          </div>
         </div>
       </div>
-      <div class="project-card reveal delay-200">
-        <div class="card-image placeholder-gradient-5"></div>
-        <div class="card-info">
-          <h3>NFT Gallery</h3>
-          <p>Interactive 3D gallery for displaying digital collectibles.</p>
-          <div class="tags"><span class="tag">Three.js</span><span class="tag">Solidity</span></div>
-        </div>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Editing Section -->
-  <section id="editing" class="content-section">
-    <div class="section-header reveal">
-      <h2>Video Editing</h2>
-      <p>Visual storytelling and motion graphics.</p>
-    </div>
-    <div class="grid-container">
-      <div class="project-card reveal delay-100">
-        <div class="card-image placeholder-gradient-6"></div>
-        <div class="card-info">
-          <h3>Cinematic Reels</h3>
-          <p>High-energy cuts synced to music for social media.</p>
-          <div class="tags"><span class="tag">Premiere</span><span class="tag">After Effects</span></div>
+    <!-- WEB3 Section -->
+    <section id="web3" class="content-section">
+      <div class="section-header reveal">
+        <h2>WEB3 Experiments</h2>
+        <p>Decentralized applications and smart contract interfaces.</p>
+      </div>
+      <div class="grid-container">
+        <div class="project-card reveal delay-100">
+          <div class="card-image placeholder-gradient-4"></div>
+          <div class="card-info">
+            <h3>Token Swap UI</h3>
+            <p>Clean, intuitive interface for decentralized exchanges.</p>
+            <div class="tags"><span class="tag">React</span><span class="tag">Ethers.js</span></div>
+          </div>
+        </div>
+        <div class="project-card reveal delay-200">
+          <div class="card-image placeholder-gradient-5"></div>
+          <div class="card-info">
+            <h3>NFT Gallery</h3>
+            <p>Interactive 3D gallery for displaying digital collectibles.</p>
+            <div class="tags"><span class="tag">Three.js</span><span class="tag">Solidity</span></div>
+          </div>
         </div>
       </div>
-      <div class="project-card reveal delay-200">
-        <div class="card-image placeholder-gradient-1"></div>
-        <div class="card-info">
-          <h3>Tech Reviews</h3>
-          <p>Clean, informative edits with motion graphics overlays.</p>
-          <div class="tags"><span class="tag">DaVinci</span><span class="tag">Fusion</span></div>
+    </section>
+
+    <!-- Editing Section -->
+    <section id="editing" class="content-section">
+      <div class="section-header reveal">
+        <h2>Video Editing</h2>
+        <p>Visual storytelling and motion graphics.</p>
+      </div>
+      <div class="grid-container">
+        <div class="project-card reveal delay-100">
+          <div class="card-image placeholder-gradient-6"></div>
+          <div class="card-info">
+            <h3>Cinematic Reels</h3>
+            <p>High-energy cuts synced to music for social media.</p>
+            <div class="tags"><span class="tag">Premiere</span><span class="tag">After Effects</span></div>
+          </div>
+        </div>
+        <div class="project-card reveal delay-200">
+          <div class="card-image placeholder-gradient-1"></div>
+          <div class="card-info">
+            <h3>Tech Reviews</h3>
+            <p>Clean, informative edits with motion graphics overlays.</p>
+            <div class="tags"><span class="tag">DaVinci</span><span class="tag">Fusion</span></div>
+          </div>
+        </div>
+        <div class="project-card reveal delay-300">
+          <div class="card-image placeholder-gradient-2"></div>
+          <div class="card-info">
+            <h3>Gaming Highlights</h3>
+            <p>Fast-paced montage editing for gameplay clips.</p>
+            <div class="tags"><span class="tag">Vegas</span><span class="tag">SFX</span></div>
+          </div>
         </div>
       </div>
-      <div class="project-card reveal delay-300">
-        <div class="card-image placeholder-gradient-2"></div>
-        <div class="card-info">
-          <h3>Gaming Highlights</h3>
-          <p>Fast-paced montage editing for gameplay clips.</p>
-          <div class="tags"><span class="tag">Vegas</span><span class="tag">SFX</span></div>
-        </div>
-      </div>
-    </div>
-  </section>
-  
-  <footer class="footer reveal">
-    <p>&copy; 2024 Cheeku. Built with passion.</p>
-  </footer>
-</main>
+    </section>
 
-<!-- confetti canvas -->
-<canvas id="confetti"></canvas>
+    <footer class="footer reveal">
+      <p>Cheeku. Built with passion.</p>
+    </footer>
+  </main>
 
-<!-- bottom message -->
-<div class="bottom-msg" id="bottomMsg"></div>
+  <!-- confetti canvas -->
+  <canvas id="confetti"></canvas>
 
-<script src="script.js"></script>
+  <!-- bottom message -->
+  <div class="bottom-msg" id="bottomMsg"></div>
+
+  <script src="script.js"></script>
 </body>
+
 </html>
