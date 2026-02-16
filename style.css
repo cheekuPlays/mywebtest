@@ -203,6 +203,23 @@ section {
 .hero-content {
   position: relative;
   z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.card-shadow {
+  position: absolute;
+  width: 600px;
+  height: 380px;
+  border-radius: 30px;
+  background: radial-gradient(ellipse at center, rgba(0, 60, 90, 0.2), rgba(0, 0, 0, 0) 70%);
+  filter: blur(50px);
+  z-index: -1;
+  pointer-events: none;
+  transition: transform .12s linear, opacity .18s ease;
 }
 
 .center-card {
@@ -220,6 +237,10 @@ section {
   text-align: center;
   transition: box-shadow .18s ease, transform .12s ease;
   position: relative;
+  z-index: 20;
+  /* Ensure above shadow and background */
+  pointer-events: auto !important;
+  /* Force clicks to work */
 }
 
 .center-card h1 {
@@ -246,6 +267,11 @@ section {
   color: #ffdcb3;
   font-weight: 600;
   opacity: 0.8;
+  cursor: pointer;
+  /* Hint that it's clickable */
+  user-select: none;
+  padding: 10px;
+  /* Larger hit area */
 }
 
 .scroll-indicator {
@@ -259,6 +285,10 @@ section {
   animation: bounce 2s infinite;
   cursor: pointer;
   transition: opacity 0.2s ease;
+  pointer-events: auto;
+  /* Ensure clickable */
+  padding: 10px;
+  /* Hit area */
 }
 
 .scroll-indicator:hover {
