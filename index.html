@@ -3,156 +3,151 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Cheeku</title>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --accent:#ff8800;
-    --status-yellow:#ffd166;
-    --glass-bg: rgba(255,255,255,0.06);
-    --glass-border: rgba(255,255,255,0.10);
-    --panel-text:#eafcff;
-    --ui-z:60;
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial;color:#fff;-webkit-font-smoothing:antialiased}
-  body{
-    overflow:hidden;
-    background: linear-gradient(120deg,#071227 0%,#082033 35%,#0b1630 65%,#071227 100%);
-    background-size:200% 200%;
-    animation:bgShift 20s linear infinite;
-  }
-  @keyframes bgShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-
-  /* topbar layout: left / center / right */
-  .topbar {
-    position:fixed; top:14px; left:0; right:0; z-index:var(--ui-z); pointer-events:none;
-    height:48px;
-  }
-  .topbar-inner {
-    width:min(1200px, calc(100% - 40px)); margin:0 auto; height:100%;
-    display:flex; align-items:center; justify-content:space-between; position:relative;
-  }
-
-  .left, .right { display:flex; align-items:center; gap:12px; pointer-events:auto; }
-  .center { position:absolute; left:50%; transform:translateX(-50%); display:flex; gap:16px; align-items:center; pointer-events:auto; }
-
-  .logo{
-    font-family:"Baloo 2",Inter; font-weight:600; font-size:20px; padding:6px 12px; border-radius:999px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.00));
-    border:1px solid rgba(255,255,255,0.04); color:#fff; display:inline-flex; align-items:center; gap:8px;
-    cursor:pointer; user-select:none; box-shadow: 0 6px 12px rgba(255,136,0,0.03) inset; transition: transform .18s cubic-bezier(.2,.9,.2,1);
-  }
-  .chip{ font-size:12px; padding:3px 8px; border-radius:999px; color:var(--accent); font-weight:700; background: linear-gradient(90deg, rgba(255,136,0,0.06), rgba(255,255,255,0.01)); }
-
-  .tab{ padding:10px 16px; border-radius:12px; background:var(--glass-bg); border:1px solid var(--glass-border); backdrop-filter: blur(12px) saturate(120%); color:#bfefff; font-weight:700; cursor:pointer; transition: transform .16s ease, background .16s ease; position:relative; display:flex; align-items:center; gap:8px; }
-  .tab:hover{ transform:translateY(-3px); background: rgba(255,255,255,0.08); color:#fff; }
-  .tab .arrow{ font-size:12px; transform-origin:center; transition: transform .24s cubic-bezier(.2,.9,.2,1); color:#e9fbff; opacity:0.95; }
-
-  .tab-content{
-    position:absolute; top:56px; left:50%; transform:translateX(-50%) translateY(-8px) scale(.98); width:320px; padding:14px; border-radius:14px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
-    border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(18px) saturate(120%); box-shadow: 0 12px 36px rgba(2,6,23,0.6);
-    color:var(--panel-text); text-align:center; opacity:0; pointer-events:none; transform-origin:top center; transition: all .22s cubic-bezier(.2,.9,.2,1);
-    z-index: calc(var(--ui-z)+10);
-  }
-  .tab.active .tab-content{ opacity:1; pointer-events:auto; transform:translateX(-50%) translateY(0) scale(1); }
-
-  .status{ display:flex; gap:8px; align-items:center; font-weight:700; color:var(--status-yellow); font-size:14px; background: linear-gradient(180deg, rgba(255,209,102,0.03), rgba(255,209,102,0.01)); border-radius:12px; padding:6px 10px; border:1px solid rgba(255,209,102,0.08); pointer-events:auto; cursor:pointer; }
-  .status-dot{ width:10px; height:10px; border-radius:50%; background:var(--status-yellow); box-shadow:0 0 8px rgba(255,209,102,0.45); transition: opacity 0.15s ease; }
-  .status-dot.flicker{ animation: flickerBlink 1s ease; }
-  @keyframes flickerBlink{
-    0%,100%{opacity:1;} 25%,75%{opacity:0.2;}
-  }
-
-  /* stage & card */
-  .stage{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; z-index:var(--ui-z); pointer-events:none; }
-  .card-zone{ position:relative; width:760px; height:520px; display:flex; align-items:center; justify-content:center; pointer-events:auto; z-index:calc(var(--ui-z)+1); }
-
-  .card-shadow{
-    position:absolute; width:540px; height:360px; border-radius:26px; background: radial-gradient(ellipse at center, rgba(0,60,90,0.14), rgba(0,0,0,0)); filter: blur(40px); z-index:calc(var(--ui-z)); pointer-events:none; transition: transform .12s linear, opacity .18s ease;
-  }
-
-  .center-card{
-    width:520px; height:320px; border-radius:20px; background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02)); border:1px solid rgba(255,255,255,0.12); backdrop-filter: blur(14px) saturate(120%); box-shadow:0 18px 50px rgba(3,6,23,0.6); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:28px; transition: box-shadow .18s ease, transform .12s ease; pointer-events:auto; position:relative; overflow:visible;
-  }
-  .center-card h2{ margin:0; font-family:"Baloo 2",Inter; font-size:2.1rem; color:var(--accent); text-shadow: 0 6px 18px rgba(255,136,0,0.08); }
-  .center-card p{ margin-top:10px; margin-bottom:18px; font-size:1.05rem; color:var(--panel-text); max-width:86%; line-height:1.35; }
-  .center-card .name{ position:absolute; bottom:16px; font-size:.95rem; color:#ffdcb3; font-weight:600; cursor:pointer; user-select:none; }
-
-  .center-card.hover-glow{ box-shadow: 0 30px 70px rgba(255,136,0,0.12); }
-
-  /* cursor glow + spotlight */
-  .cursor-glow{ position:fixed; left:0; top:0; width:120px; height:120px; border-radius:50%; pointer-events:none; transform:translate3d(-9999px,-9999px,0); z-index:4; background: radial-gradient(circle, rgba(255,140,0,0.28) 0%, rgba(255,140,0,0.12) 20%, rgba(0,180,255,0.06) 40%, rgba(0,0,0,0) 70%); filter: blur(20px); mix-blend-mode: screen; transition:opacity .12s linear, width .12s ease, height .12s ease; }
-  .spotlight{ position:fixed; left:0; top:0; width:520px; height:520px; pointer-events:none; transform: translate3d(-9999px,-9999px,0); z-index:2; mix-blend-mode: screen; filter: blur(36px); background: radial-gradient(circle at center, rgba(80,200,255,0.10) 0%, rgba(40,160,220,0.06) 25%, rgba(0,0,0,0) 60%); transition: opacity .12s linear; }
-
-  /* bottom messages */
-  .bottom-msg{ position:fixed; left:50%; transform:translateX(-50%); bottom:24px; z-index:999; background: rgba(0,0,0,0.45); color:#dff8ff; padding:8px 14px; border-radius:12px; font-size:13px; backdrop-filter: blur(8px); box-shadow: 0 8px 24px rgba(0,0,0,0.45); opacity:0; pointer-events:none; transition:opacity .18s ease, transform .18s ease; }
-  .bottom-msg.show{ opacity:1; transform:translateX(-50%) translateY(0); }
-
-  /* 67 popup (positioned absolute via JS under name) */
-  .badge-67{ position:fixed; font-size:16px; color:rgba(255,255,255,0.95); background: rgba(0,0,0,0.5); padding:6px 10px; border-radius:10px; opacity:0; transform: translateY(-6px) scale(.95); transition: opacity .12s ease, transform .22s cubic-bezier(.2,.9,.2,1); pointer-events:none; z-index:9999; }
-
-  /* confetti canvas */
-  #confetti{ position:fixed; inset:0; z-index:9998; pointer-events:none; }
-
-  /* small load animations */
-  .loading .topbar-inner { opacity:0; transform:translateY(-6px) }
-  .loading .center-card { opacity:0; transform:translateY(18px) scale(.98) }
-  .loading .logo { opacity:0; transform:translateY(-6px) scale(.98) }
-  .loaded .topbar-inner, .loaded .center-card, .loaded .logo { opacity:1; transform:none; transition: all .6s cubic-bezier(.2,.9,.2,1); }
-
-  @media (max-width:760px){
-    .center-card{ width:92%; height:auto; padding:22px }
-    .card-zone{ width:92%; height:420px }
-    .spotlight{ width:360px; height:360px }
-  }
-</style>
+<title>Cheeku - Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 </head>
 <body class="loading">
 
 <!-- spotlight -->
-<div class="spotlight" id="spotlight" style="opacity:0"></div>
+<div class="spotlight" id="spotlight"></div>
+<div class="cursor-glow" id="cursorGlow"></div>
 
 <!-- topbar -->
-<div class="topbar">
+<nav class="topbar">
   <div class="topbar-inner">
     <div class="left">
-      <div class="logo" id="logoBtn">CHEEKU <span class="chip">fun</span></div>
+      <div class="logo" id="logoBtn">CHEEKU <span class="chip">dev</span></div>
     </div>
 
     <div class="center" aria-label="Main nav">
-      <div class="tab" data-key="gd">Game Development <span class="arrow">▾</span>
-        <div class="tab-content"><p>Prototypes, gameplay notes and in-progress builds — click to preview.</p></div>
-      </div>
-      <div class="tab" data-key="w3">WEB3 <span class="arrow">▾</span>
-        <div class="tab-content"><p>Smart contract experiments and token UX ideas — work in progress.</p></div>
-      </div>
-      <div class="tab" data-key="ed">Editing <span class="arrow">▾</span>
-        <div class="tab-content"><p>Video edits, workflow notes and visual process snapshots.</p></div>
-      </div>
+      <a href="#hero" class="tab active-link" data-target="hero">Home</a>
+      <a href="#gamedev" class="tab" data-target="gamedev">Game Dev</a>
+      <a href="#web3" class="tab" data-target="web3">WEB3</a>
+      <a href="#editing" class="tab" data-target="editing">Editing</a>
     </div>
 
     <div class="right">
-      <div class="status" id="statusToggle"><div class="status-dot" id="statusDot"></div><div>Under Development</div></div>
+      <div class="status" id="statusToggle"><div class="status-dot" id="statusDot"></div><div>Open for Work</div></div>
     </div>
   </div>
-</div>
+</nav>
 
-<!-- stage -->
-<div class="stage">
-  <div class="card-zone" id="cardZone">
-    <div class="card-shadow" id="cardShadow" style="opacity:0.9"></div>
-    <div class="center-card" id="card" role="main" aria-label="Cheeku main card">
-      <h2>Welcome to Cheeku's Space</h2>
-      <p>Something new is taking shape.</p>
-      <div class="name" id="nameBtn">Mithun M Murthy</div>
+<main>
+  <!-- Hero Section -->
+  <section id="hero" class="hero-section">
+    <div class="hero-content reveal">
+      <div class="card-shadow"></div>
+      <div class="center-card mirror-card">
+        <h1>Welcome to Cheeku's Space</h1>
+        <p>Crafting immersive digital experiences through code, design, and motion.</p>
+        <div class="name">Mithun M Murthy</div>
+        <div class="scroll-indicator">
+          <span>Scroll to explore</span>
+          <div class="arrow-down">↓</div>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
+  </section>
 
-<!-- cursor glow -->
-<div class="cursor-glow" id="cursorGlow" style="opacity:0"></div>
+  <!-- Game Development Section -->
+  <section id="gamedev" class="content-section">
+    <div class="section-header reveal">
+      <h2>Game Development</h2>
+      <p>Building worlds, mechanics, and interactive stories.</p>
+    </div>
+    <div class="grid-container">
+      <div class="project-card reveal delay-100">
+        <div class="card-image placeholder-gradient-1"></div>
+        <div class="card-info">
+          <h3>Neon Racer</h3>
+          <p>High-speed cyberpunk racing visual prototype made in Unity.</p>
+          <div class="tags"><span class="tag">Unity</span><span class="tag">C#</span></div>
+        </div>
+      </div>
+      <div class="project-card reveal delay-200">
+        <div class="card-image placeholder-gradient-2"></div>
+        <div class="card-info">
+          <h3>Void Walker</h3>
+          <p>Atmospheric platformer with gravity-shifting mechanics.</p>
+          <div class="tags"><span class="tag">Godot</span><span class="tag">GDScript</span></div>
+        </div>
+      </div>
+      <div class="project-card reveal delay-300">
+        <div class="card-image placeholder-gradient-3"></div>
+        <div class="card-info">
+          <h3>Pixel Tactics</h3>
+          <p>Turn-based strategy game engine experiment.</p>
+          <div class="tags"><span class="tag">C++</span><span class="tag">SDL2</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WEB3 Section -->
+  <section id="web3" class="content-section">
+    <div class="section-header reveal">
+      <h2>WEB3 Experiments</h2>
+      <p>Decentralized applications and smart contract interfaces.</p>
+    </div>
+    <div class="grid-container">
+      <div class="project-card reveal delay-100">
+        <div class="card-image placeholder-gradient-4"></div>
+        <div class="card-info">
+          <h3>Token Swap UI</h3>
+          <p>Clean, intuitive interface for decentralized exchanges.</p>
+          <div class="tags"><span class="tag">React</span><span class="tag">Ethers.js</span></div>
+        </div>
+      </div>
+      <div class="project-card reveal delay-200">
+        <div class="card-image placeholder-gradient-5"></div>
+        <div class="card-info">
+          <h3>NFT Gallery</h3>
+          <p>Interactive 3D gallery for displaying digital collectibles.</p>
+          <div class="tags"><span class="tag">Three.js</span><span class="tag">Solidity</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Editing Section -->
+  <section id="editing" class="content-section">
+    <div class="section-header reveal">
+      <h2>Video Editing</h2>
+      <p>Visual storytelling and motion graphics.</p>
+    </div>
+    <div class="grid-container">
+      <div class="project-card reveal delay-100">
+        <div class="card-image placeholder-gradient-6"></div>
+        <div class="card-info">
+          <h3>Cinematic Reels</h3>
+          <p>High-energy cuts synced to music for social media.</p>
+          <div class="tags"><span class="tag">Premiere</span><span class="tag">After Effects</span></div>
+        </div>
+      </div>
+      <div class="project-card reveal delay-200">
+        <div class="card-image placeholder-gradient-1"></div>
+        <div class="card-info">
+          <h3>Tech Reviews</h3>
+          <p>Clean, informative edits with motion graphics overlays.</p>
+          <div class="tags"><span class="tag">DaVinci</span><span class="tag">Fusion</span></div>
+        </div>
+      </div>
+      <div class="project-card reveal delay-300">
+        <div class="card-image placeholder-gradient-2"></div>
+        <div class="card-info">
+          <h3>Gaming Highlights</h3>
+          <p>Fast-paced montage editing for gameplay clips.</p>
+          <div class="tags"><span class="tag">Vegas</span><span class="tag">SFX</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <footer class="footer reveal">
+    <p>&copy; 2024 Cheeku. Built with passion.</p>
+  </footer>
+</main>
 
 <!-- confetti canvas -->
 <canvas id="confetti"></canvas>
@@ -160,236 +155,6 @@
 <!-- bottom message -->
 <div class="bottom-msg" id="bottomMsg"></div>
 
-<!-- 67 badge (unused now but kept) -->
-<div class="badge-67" id="badge67">67</div>
-
-<script>
-/* Helpers */
-const $ = s => document.querySelector(s);
-const $$ = s => Array.from(document.querySelectorAll(s));
-function lerp(a,b,t){ return a + (b-a) * t }
-
-/* Elements */
-const body = document.body;
-const spotlight = $('#spotlight');
-const cursorGlow = $('#cursorGlow');
-const logo = $('#logoBtn');
-const confettiCanvas = $('#confetti');
-const tabs = $$('.tab');
-const statusDot = $('#statusDot');
-const statusBox = $('#statusToggle');
-const card = $('#card');
-const cardZone = $('#cardZone');
-const cardShadow = $('#cardShadow');
-const bottomMsg = $('#bottomMsg');
-const badge67 = $('#badge67');
-const nameBtn = $('#nameBtn');
-
-/* Loading intro */
-window.addEventListener('load', ()=> {
-  setTimeout(()=> {
-    body.classList.remove('loading');
-    body.classList.add('loaded');
-  }, 200);
-});
-
-/* Spotlight & cursor glow RAF (single loop) */
-let mouse = {x:-9999, y:-9999};
-let x = -9999, y = -9999;
-const ease = 0.16;
-
-window.addEventListener('mousemove', (e)=> {
-  mouse.x = e.clientX; mouse.y = e.clientY;
-  spotlight.style.opacity = '0.92';
-  cursorGlow.style.opacity = '1';
-});
-window.addEventListener('mouseleave', ()=> {
-  spotlight.style.opacity = '0';
-  cursorGlow.style.opacity = '0';
-});
-
-function rafLoop(){
-  x = lerp(x, mouse.x, ease);
-  y = lerp(y, mouse.y, ease);
-  // center spotlight (half of default sizes)
-  spotlight.style.transform = `translate3d(${Math.round(x - spotlight.offsetWidth/2)}px, ${Math.round(y - spotlight.offsetHeight/2)}px, 0)`;
-  cursorGlow.style.transform = `translate3d(${Math.round(x - cursorGlow.offsetWidth/2)}px, ${Math.round(y - cursorGlow.offsetHeight/2)}px, 0)`;
-  requestAnimationFrame(rafLoop);
-}
-requestAnimationFrame(rafLoop);
-
-/* Tabs with arrows */
-tabs.forEach(tab => {
-  const arrow = tab.querySelector('.arrow');
-  tab.addEventListener('click', (ev) => {
-    ev.stopPropagation();
-    const was = tab.classList.contains('active');
-    tabs.forEach(t => { t.classList.remove('active'); const a = t.querySelector('.arrow'); if(a) a.style.transform = ''; });
-    if(!was){ tab.classList.add('active'); if(arrow) arrow.style.transform = 'rotate(180deg)'; }
-  });
-});
-document.addEventListener('click', (e)=> {
-  if(!e.target.closest('.tab')){ tabs.forEach(t => t.classList.remove('active')); $$('.tab .arrow').forEach(a => a.style.transform = ''); }
-});
-document.addEventListener('keydown', (e)=> { if(e.key === 'Escape') tabs.forEach(t=>t.classList.remove('active'))});
-
-/* Card proximity + shadow (capped tilt) */
-let zoneState = {rx:0, ry:0, tx:0, ty:0, scale:1};
-let anim = {rx:0, ry:0, tx:0, ty:0, scale:1};
-const maxTilt = 12;
-
-function onZoneMove(e){
-  const r = card.getBoundingClientRect();
-  const cx = r.left + r.width/2;
-  const cy = r.top + r.height/2;
-  const dx = (e.clientX - cx) / (r.width/2);
-  const dy = (e.clientY - cy) / (r.height/2);
-  const sx = Math.sign(dx) * Math.pow(Math.abs(dx), 1.4);
-  const sy = Math.sign(dy) * Math.pow(Math.abs(dy), 1.4);
-  zoneState.ry = Math.max(-maxTilt, Math.min(maxTilt, sx * maxTilt));
-  zoneState.rx = Math.max(-maxTilt, Math.min(maxTilt, -sy * maxTilt));
-  zoneState.tx = sx * 8; zoneState.ty = sy * 6; zoneState.scale = 1.03;
-  card.classList.add('hover-glow');
-
-  // shadow opposite small offset
-  const sX = -sx * 18; const sY = -sy * 10;
-  cardShadow.style.transform = `translate3d(${sX}px, ${sY}px, 0)`;
-  cardShadow.style.opacity = '0.9';
-}
-function onZoneLeave(){
-  zoneState = {rx:0, ry:0, tx:0, ty:0, scale:1};
-  card.classList.remove('hover-glow');
-  cardShadow.style.opacity = '0.72';
-}
-cardZone.addEventListener('mousemove', onZoneMove);
-cardZone.addEventListener('mouseleave', onZoneLeave);
-
-(function animateCard(){
-  const easeCard = 0.12;
-  anim.rx = lerp(anim.rx, zoneState.rx, easeCard);
-  anim.ry = lerp(anim.ry, zoneState.ry, easeCard);
-  anim.tx = lerp(anim.tx, zoneState.tx, easeCard);
-  anim.ty = lerp(anim.ty, zoneState.ty, easeCard);
-  anim.scale = lerp(anim.scale, zoneState.scale, easeCard);
-  card.style.transform = `perspective(900px) translate3d(${anim.tx}px, ${anim.ty}px, 0) rotateX(${anim.rx}deg) rotateY(${anim.ry}deg) scale(${anim.scale})`;
-  requestAnimationFrame(animateCard);
-})();
-
-/* Confetti from logo — single active instance, duration 3s */
-confettiCanvas.width = innerWidth; confettiCanvas.height = innerHeight;
-window.addEventListener('resize', ()=> { confettiCanvas.width = innerWidth; confettiCanvas.height = innerHeight; });
-
-let confettiActive = false;
-logo.addEventListener('click', (e)=>{
-  if(confettiActive) return;
-  confettiActive = true;
-  logo.animate([{transform:'translateY(0)'},{transform:'translateY(-10px) rotate(-4deg)'},{transform:'translateY(2px) rotate(4deg)'},{transform:'translateY(0)'}], {duration:420, easing:'cubic-bezier(.2,.8,.2,1)'});
-  const rect = logo.getBoundingClientRect();
-  const sx = rect.left + rect.width/2;
-  const sy = rect.top + rect.height/2;
-  runConfetti(sx, sy, ()=>{ confettiActive = false; });
-});
-
-function runConfetti(sx, sy, onDone){
-  const ctx = confettiCanvas.getContext('2d');
-  const parts = []; const count = 40;
-  const start = performance.now();
-  for(let i=0;i<count;i++){
-    parts.push({
-      x: sx + (Math.random()-0.5)*40,
-      y: sy + (Math.random()-0.5)*14,
-      vx: (Math.random()-0.5)*8,
-      vy: -6 - Math.random()*6,
-      r: 6 + Math.random()*6,
-      color: ['#ff6b6b','#ffd166','#4ecdc4','#ffd1ff','#ffb86b'][Math.floor(Math.random()*5)],
-      rot: Math.random()*360,
-      drot: (Math.random()-0.5)*8
-    });
-  }
-  function frame(now){
-    const t = now - start;
-    ctx.clearRect(0,0,confettiCanvas.width, confettiCanvas.height);
-    for(let p of parts){
-      p.vy += 0.28;
-      p.x += p.vx; p.y += p.vy; p.rot += p.drot;
-      ctx.save();
-      ctx.translate(p.x, p.y);
-      ctx.rotate(p.rot * Math.PI/180);
-      ctx.fillStyle = p.color;
-      ctx.fillRect(-p.r/2, -p.r/2, p.r, p.r*0.6);
-      ctx.restore();
-    }
-    if(t < 3000) requestAnimationFrame(frame); // 3 seconds
-    else { ctx.clearRect(0,0,confettiCanvas.width, confettiCanvas.height); onDone(); }
-  }
-  requestAnimationFrame(frame);
-}
-
-/* Under Development click => dot flicker for 1s and show bottom message "Have patience" */
-statusBox.addEventListener('click', ()=> {
-  statusDot.classList.add('flicker');
-  showBottomMessage('Have patience', 2000);
-  setTimeout(()=> statusDot.classList.remove('flicker'), 1000);
-});
-
-/* "67" popup after 5 clicks on name (shows at bottom message area) */
-let nameClicks = 0;
-let nameTimer = null;
-let bottomMsgTimer = null;
-function showBottomMessage(msg, duration=2000){
-  // if another message is visible, remove it first
-  bottomMsg.classList.remove('show');
-  clearTimeout(bottomMsgTimer);
-  // small delay to ensure CSS visual reset then show
-  setTimeout(()=>{
-    bottomMsg.textContent = msg;
-    bottomMsg.classList.add('show');
-    bottomMsgTimer = setTimeout(()=> bottomMsg.classList.remove('show'), duration);
-  }, 40);
-}
-
-nameBtn.addEventListener('click', (e)=>{
-  nameClicks++;
-  if(nameTimer) clearTimeout(nameTimer);
-  nameTimer = setTimeout(()=> nameClicks = 0, 1200);
-  if(nameClicks >= 5){
-    nameClicks = 0;
-    // show "67" at bottom (replace any existing bottom message)
-    showBottomMessage("67", 2000);
-  }
-});
-
-/* Background 3-click => show "stop clicking the void" bottom message */
-let bgClicks = 0; let bgTimer = null;
-document.addEventListener('click', (e)=>{
-  // ignore clicks on UI elements
-  if(e.target.closest('.tab') || e.target.closest('.center-card') || e.target.closest('.logo') || e.target.closest('.status') || e.target.closest('.chip')) return;
-  bgClicks++;
-  if(bgTimer) clearTimeout(bgTimer);
-  bgTimer = setTimeout(()=> bgClicks = 0, 700);
-  if(bgClicks >= 3){
-    bgClicks = 0;
-    // show bottom message and replace any existing
-    showBottomMessage("stop clicking the void", 2000);
-  }
-});
-
-/* small UX: cursor glow size on mousedown */
-window.addEventListener('mousedown', ()=> { cursorGlow.style.width = '160px'; cursorGlow.style.height = '160px'; });
-window.addEventListener('mouseup', ()=> { cursorGlow.style.width = '120px'; cursorGlow.style.height = '120px'; });
-
-/* Accessibility: Escape closes tabs and resets arrows */
-document.addEventListener('keydown', (e)=> { 
-  if(e.key === 'Escape') {
-    tabs.forEach(t=> {
-      t.classList.remove('active');
-      const arrow = t.querySelector('.arrow');
-      if (arrow) arrow.style.transform = '';
-    });
-  }
-});
-
-
-</script>
+<script src="script.js"></script>
 </body>
 </html>
